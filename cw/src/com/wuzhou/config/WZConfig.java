@@ -13,6 +13,7 @@ import com.jfinal.kit.PropKit;
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
 import com.jfinal.render.ViewType;
 import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
+import com.wuzhou.controller.ExcelImportController;
 import com.wuzhou.controller.IndexController;
 import com.wuzhou.controller.UserController;
 import com.wuzhou.handler.WZHandler;
@@ -34,6 +35,7 @@ public class WZConfig extends JFinalConfig {
 	@Override
 	public void configRoute(Routes me) {
 		me.add("/", IndexController.class);
+		me.add("/import", ExcelImportController.class);
 		me.add("/user", UserController.class);
 	}
 
