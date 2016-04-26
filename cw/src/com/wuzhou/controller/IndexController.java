@@ -47,6 +47,8 @@ public class IndexController extends Controller {
 				setAttr("bookBaseModel", service.getBookInfo(id));
 			} catch(Exception ex) {
 				setAttr("bookBaseModel", "");
+				ex.printStackTrace();
+				log.error(ex);
 			}
 		}
 		render("/cw/EditBook.jsp");
@@ -63,6 +65,7 @@ public class IndexController extends Controller {
 		} catch(Exception ex) {
 			renderJson("-1");
 			ex.printStackTrace();
+			log.error(ex);
 		}
 	}
 	
@@ -73,6 +76,7 @@ public class IndexController extends Controller {
 		} catch(Exception ex) {
 			renderJson("-1");
 			ex.printStackTrace();
+			log.error(ex);
 		}
 	}
 	
@@ -103,6 +107,7 @@ public class IndexController extends Controller {
 		} catch(Exception ex) {
 			ex.printStackTrace();
 			renderJson(ex.getMessage());
+			log.error(ex);
 		}
 	}
 	
@@ -124,6 +129,7 @@ public class IndexController extends Controller {
 			ex.printStackTrace();
 			result.setStatus(false);
 			result.setMessage(ex.getMessage());
+			log.error(ex);
 		}
 		renderJson(result);
 	}
@@ -152,6 +158,7 @@ public class IndexController extends Controller {
 			} catch(Exception ex) {
 				renderJson("-2");
 				ex.printStackTrace();
+				log.error(ex);
 			}
 		}
 	}
@@ -191,6 +198,7 @@ public class IndexController extends Controller {
 		} catch(Exception ex) {
 			renderJson("-1");
 			ex.printStackTrace();
+			log.error(ex);
 		}
 	}
 	
@@ -212,6 +220,7 @@ public class IndexController extends Controller {
 		} catch(Exception ex) {
 			renderJson("-1");
 			ex.printStackTrace();
+			log.error(ex);
 		}
 	}
 	
@@ -233,6 +242,7 @@ public class IndexController extends Controller {
 		} catch(Exception ex) {
 			renderJson("-1");
 			ex.printStackTrace();
+			log.error(ex);
 		}
 	}
 	
@@ -247,6 +257,7 @@ public class IndexController extends Controller {
 		} catch(Exception ex) {
 			ex.printStackTrace();
 			renderJson(-1);
+			log.error(ex);
 		}
 	}
 	
@@ -263,6 +274,7 @@ public class IndexController extends Controller {
 		} catch(Exception ex) {
 			ex.printStackTrace();
 			renderJson("");
+			log.error(ex);
 		}
 	}
 	
