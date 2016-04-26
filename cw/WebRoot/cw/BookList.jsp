@@ -69,7 +69,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
   
   <body>
   	<jsp:include page="_header.jsp"></jsp:include>
-    <div class="container-fluid">
+    <div class="container">
 		<div class="row">
 			<div class="col-sm-8">
 				<select id="excelSel" class="form-control">
@@ -139,7 +139,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     	mySearchSql = "1=1";
     	getSearchCondition();
 		_page = page;
-		$.post("${ctx}/getBookList", {mySearchSql:mySearchSql, page:_page}, function(data) {
+		$.post("${ctx}/book/getBookList", {mySearchSql:mySearchSql, page:_page}, function(data) {
 			var content="";
 			if(data&&data.list.length) {
 				for(var i = 0; i < data.list.length; i++) {
@@ -149,13 +149,13 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 					content+="<td>"+data.list[i].book_name+"</td>";
 					content+="<td>"+data.list[i].book_lang+"</td>";
 					content+="<td>"+data.list[i].book_author+"</td>";
-					content+="<td>"+data.list[i].epub_price+"</td>";
-					content+="<td>"+data.list[i].pdf_price+"</td>";
-					content+="<td>"+data.list[i].ad_price+"</td>";
-					content+="<td>"+(data.list[i].epub_price+data.list[i].pdf_price+data.list[i].ad_price)+"</td>";
-					content+="<td>"+data.list[i].author_royalty+"</td>";
+					content+="<td>"+data.list[i].epub_price.toFixed(2)+"</td>";
+					content+="<td>"+data.list[i].pdf_price.toFixed(2)+"</td>";
+					content+="<td>"+data.list[i].ad_price.toFixed(2)+"</td>";
+					content+="<td>"+(data.list[i].epub_price+data.list[i].pdf_price+data.list[i].ad_price).toFixed(2)+"</td>";
+					content+="<td>"+data.list[i].author_royalty.toFixed(2)+"</td>";
 					content+="<td>"+data.list[i].trans_time+"</td>";
-					content+="<td><a href=\"${ctx}/bookInfo?id="+data.list[i].id+"\" title='修改'><span class='glyphicon glyphicon-pencil' style='color:blue'></span></a>&nbsp;&nbsp;&nbsp;<a href=\"javascript:updateBook('"+data.list[i].id+"')\" title='删除'><span class='glyphicon glyphicon-trash' style='color:red'></span></a></td>";
+					content+="<td><a href=\"${ctx}/book/bookInfo?id="+data.list[i].id+"\" title='修改'><span class='glyphicon glyphicon-pencil' style='color:blue'></span></a>&nbsp;&nbsp;&nbsp;<a href=\"javascript:updateBook('"+data.list[i].id+"')\" title='删除'><span class='glyphicon glyphicon-trash' style='color:red'></span></a></td>";
 					content+="</tr>";
 				}
 				initPage(data.pageNumber, data.totalPage, data.totalRow);
@@ -168,7 +168,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     //初始化批次映射
     function initExcelMap() {
 		$.ajax({
-			url:"${ctx}/getExcelList",
+			url:"${ctx}/book/getExcelList",
 			method:"POST",
 			beforeSend:function() {
 				$("#excelSel").html("<option value='0'>暂无数据</option>");
@@ -236,7 +236,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     //总结统计
     function getSummary() {
 		$.ajax({
-			url:"${ctx}/getSummary",
+			url:"${ctx}/book/getSummary",
 			data:{mySearchSql:mySearchSql},
 			method:"POST",
 			success:function(data) {
@@ -308,7 +308,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	//
 	function updateBook(bId) {
 		if(confirm("确定要删除吗？")) {
-			$.post("${ctx}/updateBookById", {bookId:bId}, function(data) {
+			$.post("${ctx}/book/updateBookById", {bookId:bId}, function(data) {
 				if(data=="1") {
 					alert("删除成功");
 					initSearch(_page);

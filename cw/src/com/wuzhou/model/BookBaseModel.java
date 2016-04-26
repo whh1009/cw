@@ -30,7 +30,7 @@ public class BookBaseModel extends Model<BookBaseModel> {
 	 * @return
 	 */
 	public boolean updateBookById(int bookId, int bookStatus) {
-		int flag = Db.update("update booknum set book_status = ? where id = ?", bookStatus, bookId);
+		int flag = Db.update("update book_base set book_status = ? where id = ?", bookStatus, bookId);
 		if(flag == 1) return true;
 		else return false;
 	}

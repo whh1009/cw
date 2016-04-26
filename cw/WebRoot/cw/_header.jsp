@@ -110,7 +110,7 @@ $(function() {
 </script>
 <!-- http://work.smarchal.com/twbscolor/css/e74c3cc0392becf0f1ffbbbc0 -->
 	<nav class="navbar navbar-default" role="navigation">
-		<!-- <div class="container"> -->
+		<div class="container">
 			<!-- Brand and toggle get grouped for better mobile display -->
 			<div class="navbar-header">
 				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
@@ -125,12 +125,12 @@ $(function() {
 					<li class="active"><a href="${ctx }/">首页 <span class="sr-only">(current)</span></a></li>
 					<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">数据导入 <span class="caret"></span></a>
 						<ul class="dropdown-menu">
-							<li><a href="${ctx }/importBaseBookPage"><i class='glyphicon glyphicon-import'></i>&nbsp;图书基本信息导入</a></li>
+							<li><a href="${ctx }/import/importBaseBookPage"><i class='glyphicon glyphicon-import'></i>&nbsp;图书基本信息导入</a></li>
 							<li><a href="${ctx }/importBaseBookPage"><i class='glyphicon glyphicon-import'></i>&nbsp;亚马逊（中国）导入</a></li>
 							<li><a href="${ctx }/importBaseBookPage"><i class='glyphicon glyphicon-import'></i>&nbsp;亚马逊（美国）导入</a></li>
 						</ul>
 					</li>
-					<li><a href="${ctx }/bookList"><i class='glyphicon glyphicon-tasks'></i>&nbsp;图书列表</a></li>
+					<li><a href="${ctx }/book/bookList"><i class='glyphicon glyphicon-tasks'></i>&nbsp;图书列表</a></li>
 					<%-- <li><a href="${ctx }/importBaseBookPage">图书基本信息导入</a></li> --%>
 				</ul>
 				<!-- 
@@ -150,6 +150,6 @@ $(function() {
 				
 			</div>
 			<!-- /.navbar-collapse -->
-		<!-- </div> -->
+		</div>
 		<!-- /.container-fluid -->
 	</nav>

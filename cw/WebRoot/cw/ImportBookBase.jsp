@@ -38,14 +38,14 @@
 	
 	$("#file").fileinput({
         language: "zh",
-        uploadUrl: "${ctx }/uploadBaseBookExcel",
+        uploadUrl: "${ctx }/import/uploadBaseBookExcel",
         maxFilesNum: 1,
         allowedFileExtensions : ["xlsx"],
     });
 	$(function() {
 		$("#file").on("fileuploaded", function(event, data, previewId, index) {
 			$.ajax({
-				url:"${ctx }/saveBaseBookExcel",
+				url:"${ctx }/import/saveBaseBookExcel",
 				type:"post",
 				dataType:"json",
 				beforeSend: function () {
