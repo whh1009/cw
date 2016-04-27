@@ -1,21 +1,26 @@
 package com.wuzhou.service;
 
 import java.io.File;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
 import com.wuzhou.model.BookBaseModel;
+import com.wuzhou.model.BookSaleModel;
 import com.wuzhou.tool.FileUtil;
 import com.wuzhou.tool.POITools;
 import com.wuzhou.tool.StringUtil;
+import com.wuzhou.tool.TimeTools;
 
 public class ExcelImportService {
-
+	Logger log = Logger.getLogger(ExcelImportService.class);
 	
 	/**
 	 * 解析excel
@@ -79,4 +84,59 @@ public class ExcelImportService {
 			return str;
 		}
 	}
+	
+	/**
+	 * 解析亚马逊美国的excel
+	 * @param filePath
+	 */
+	public int parserAmazonUSExcel(String excelPath) throws Exception{
+		Workbook wb = POITools.getWorkbook(excelPath);
+		String name = new File(excelPath).getName().replace(".xlsx", "");
+		Sheet sheet = POITools.getSheet(0, wb); //第一个sheet
+		Row row = null;
+		List<String> sqlList = new ArrayList<String>();
+		String isbn = "";
+		String bookName = "";
+		String bookAuthor = "";
+		String saleTime = getDate(name.substring(name.lastIndexOf("_")+1));
+		String saleCount = "";
+		String salePrice = "";
+		String platform = "1";
+		for(int rowNumber = 1; rowNumber<POITools.getRowCount(sheet);rowNumber++) { //第一行标题行，从第二行开始
+			row = POITools.getRow(sheet, rowNumber);
+			if("".equals(POITools.getCellValue(row.getCell(0)))) break; //如果读到空行就返回
+			isbn = POITools.getCellValue(row.getCell(3));
+			bookName = POITools.getCellValue(row.getCell(5)).replace("'", "''");
+			bookAuthor = POITools.getCellValue(row.getCell(6)).replace("'", "''");
+			saleCount = "".equals(POITools.getCellValue(row.getCell(12)))?"0.0":POITools.getCellValue(row.getCell(12));
+			salePrice = "".equals(POITools.getCellValue(row.getCell(21)))?"0.0":POITools.getCellValue(row.getCell(21));
+			sqlList.add("insert ignore into book_sale (sale_time, book_isbn, book_name, book_author, sale_total_count, sale_total_price, platform) values "
+					+ "('"+saleTime+"', '"+isbn+"', '"+bookName+"', '"+bookAuthor+"', "+saleCount+", "+salePrice+", '"+platform+"')");
+		}
+		for(String str : sqlList) {
+			log.warn(str);
+		}
+		return BookSaleModel.dao.batchImport(sqlList).length;
+	}
+	
+	/**
+	 * 20130131-20130228
+	 * 计算月份
+	 * @param str
+	 * @return
+	 */
+	private String getDate(String str) {
+		str = str.substring(str.indexOf("-")+1);
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
+		Date date;
+		try {
+			date = formatter.parse(str);
+			return TimeTools.timeFormat(TimeTools.getBeforeDay(date.getTime(), 15),"yyyyMM");
+		} catch (ParseException e) {
+			log.error(e);
+			e.printStackTrace();
+			return "";
+		}
+	}
+	
 }

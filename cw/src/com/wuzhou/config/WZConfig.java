@@ -19,6 +19,7 @@ import com.wuzhou.controller.IndexController;
 import com.wuzhou.controller.UserController;
 import com.wuzhou.handler.WZHandler;
 import com.wuzhou.model.BookBaseModel;
+import com.wuzhou.model.BookSaleModel;
 import com.wuzhou.model.ExcelMapModel;
 import com.wuzhou.model.UserModel;
 
@@ -52,6 +53,7 @@ public class WZConfig extends JFinalConfig {
 		
 		arp.addMapping("wz_user", UserModel.class);
 		arp.addMapping("book_base", BookBaseModel.class);
+		arp.addMapping("book_sale", BookSaleModel.class);
 		arp.addMapping("excel_map", ExcelMapModel.class);
 		arp.setShowSql(true);
 		

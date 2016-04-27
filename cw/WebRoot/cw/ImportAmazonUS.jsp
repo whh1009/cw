@@ -7,7 +7,7 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta charset="utf-8">
-<title>${title }--图书基本信息导入</title>
+<title>${title }--亚马逊美国</title>
 <link rel="shortcut icon" href="${ctx }/favicon.ico" />
 <link href="${ctx }/css/fileinput.css" rel="stylesheet"/>
 <link href="${ctx }/css/showLoading.css" rel="stylesheet">
@@ -24,7 +24,7 @@
 		<div class="row">
 			<blockquote>
 				<h3>提示：</h3>
-				<p><small>请上传正确的模板，若不清楚模板格式可以<a href="${ctx }/temp/基本表导入模板.xlsx">点我下载</a></small></p>
+				<p><strong>请注意亚马逊美国模版导入名称规范一定是：CNICN_DigitalEBooksPaymentReport_20130131-20130228</strong><small><a href="${ctx }/temp/CNICN_DigitalEBooksPaymentReport.xls">点我下载模版</a></small></p>
 			</blockquote>
 		</div>
 		<div class="row">
@@ -38,14 +38,14 @@
 	
 	$("#file").fileinput({
         language: "zh",
-        uploadUrl: "${ctx }/import/uploadBaseBookExcel",
+        uploadUrl: "${ctx }/import/uploadAmazonUSBookExcel",
         maxFilesNum: 1,
-        allowedFileExtensions : ["xlsx"],
+        allowedFileExtensions : ["xlsx","xls"],
     });
 	$(function() {
 		$("#file").on("fileuploaded", function(event, data, previewId, index) {
 			$.ajax({
-				url:"${ctx }/import/saveBaseBookExcel",
+				url:"${ctx }/import/saveAmazonUSBookExcel",
 				type:"post",
 				dataType:"json",
 				beforeSend: function () {
