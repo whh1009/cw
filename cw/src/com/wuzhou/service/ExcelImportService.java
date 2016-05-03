@@ -1,11 +1,17 @@
 package com.wuzhou.service;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Row;
@@ -18,6 +24,7 @@ import com.wuzhou.tool.FileUtil;
 import com.wuzhou.tool.POITools;
 import com.wuzhou.tool.StringUtil;
 import com.wuzhou.tool.TimeTools;
+import com.wuzhou.tool.ZipUtils;
 
 public class ExcelImportService {
 	Logger log = Logger.getLogger(ExcelImportService.class);
@@ -120,6 +127,48 @@ public class ExcelImportService {
 	}
 	
 	/**
+	 * 
+	 * @param zipPath
+	 * @param unzipPath
+	 * @throws Exception
+	 */
+	public void parserAppStoreZip(String zipPath, String unzipPath) throws Exception {
+		ZipUtils.extractFolder(zipPath, unzipPath);
+		String txtPath = "";
+		for(File file : new File(unzipPath).listFiles()) {
+			String filePath = file.getAbsolutePath();
+			if(filePath.endsWith(".txt")) {
+				txtPath = filePath;
+				break;
+			}
+		}
+		if("".equals(txtPath)) return;
+		
+		
+	}
+	
+	private Map<String, Integer> parserTxt(String txtPath) {
+		Map<String, Integer> map = new HashMap<String, Integer>();
+		StringBuffer sb = new StringBuffer();
+		File file = new File(txtPath);
+		try {
+			FileInputStream stream = new FileInputStream(file);
+			InputStreamReader isr = new InputStreamReader(stream, "UTF8");
+			BufferedReader br = new BufferedReader(isr);
+			String temp = null;
+			while ((temp = br.readLine()) != null) {
+				map.put(temp.split("\t")[12], )
+			}
+			br.close();
+			isr.close();
+			stream.close();
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
+		return map;
+	}
+	
+	/**
 	 * 20130131-20130228
 	 * 计算月份
 	 * @param str
@@ -137,6 +186,18 @@ public class ExcelImportService {
 			e.printStackTrace();
 			return "";
 		}
+	}
+	
+	/**
+	 * 85515735_0116_CN.txt.gz
+	 * 计算月份
+	 * @param str
+	 * @return
+	 */
+	private String getAppStoreFileDate(String str) {
+		str = str.substring(str.indexOf("_")+1, str.lastIndexOf("_"));
+		str = str.substring(2,3)+str.substring(0,1);
+		return str;
 	}
 	
 }

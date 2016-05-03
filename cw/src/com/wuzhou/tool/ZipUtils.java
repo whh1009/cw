@@ -12,16 +12,19 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
-public class Test {
+public class ZipUtils {
 
-	public static void extractFolder(String zipFile) throws ZipException, IOException {
+	public static void main(String[] args) throws Exception {
+		extractFolder("j:\\6620fcac-a1e4-41a2-be1c-eaf5f6fc55ab.zip", "j:\\test");
+	}
+
+	public static void extractFolder(String zipFile, String unzipPath) throws ZipException, IOException {
 		System.out.println(zipFile);
 		int BUFFER = 2048;
 		File file = new File(zipFile);
 		ZipFile zip = new ZipFile(file);
 		// String newPath = zipFile.substring(0, zipFile.length() - 4);
 		// new File(newPath).mkdir();
-		String newPath = "j:\\test";
 		Enumeration zipFileEntries = zip.entries();
 		// Process each entry
 		while (zipFileEntries.hasMoreElements()) {
@@ -29,7 +32,7 @@ public class Test {
 			ZipEntry entry = (ZipEntry) zipFileEntries.nextElement();
 			String currentEntry = entry.getName();
 			System.out.println("==" + currentEntry);
-			File destFile = new File(newPath, currentEntry);
+			File destFile = new File(unzipPath, currentEntry);
 			// destFile = new File(newPath, destFile.getName());
 			File destinationParent = destFile.getParentFile();
 
@@ -56,18 +59,21 @@ public class Test {
 			}
 
 			if (currentEntry.endsWith(".zip")) {
-				extractFolder(destFile.getAbsolutePath());
+				extractFolder(destFile.getAbsolutePath(), unzipPath);
 			}
 			if(currentEntry.endsWith(".gz")) {
-				gunzipIt(destFile.getAbsolutePath(), newPath);
+				gunzipIt(destFile.getAbsolutePath(), unzipPath);
 			}
 		}
 	}
 
 	/**
-	 * GunZip it
+	 * 解压gz
+	 * un gz
+	 * @param gzFilePath
+	 * @param newPath
 	 */
-	public static void gunzipIt(String gzFilePath, String newPath) {
+	private static void gunzipIt(String gzFilePath, String newPath) {
 		byte[] buffer = new byte[1024];
 		try {
 			GZIPInputStream gzis = new GZIPInputStream(new FileInputStream(gzFilePath));
@@ -78,21 +84,8 @@ public class Test {
 			}
 			gzis.close();
 			out.close();
-			System.out.println("gz done");
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
 	}
-
-	public static void main(String[] args) throws Exception {
-		// String xml = "<xml><item bname='aa' bnum='bb' /></xml>";
-		// Document doc = Jsoup.parse(xml);
-		// Elements eles = doc.select("item");
-		// System.out.println(eles.get(0).attr("bname"));
-		// System.out.println(new Date().getTime());
-//		test2();
-		extractFolder("j:\\6620fcac-a1e4-41a2-be1c-eaf5f6fc55ab.zip");
-
-	}
-
 }
