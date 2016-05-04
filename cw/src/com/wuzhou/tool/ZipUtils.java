@@ -19,19 +19,17 @@ public class ZipUtils {
 	}
 
 	public static void extractFolder(String zipFile, String unzipPath) throws ZipException, IOException {
-		System.out.println(zipFile);
 		int BUFFER = 2048;
 		File file = new File(zipFile);
 		ZipFile zip = new ZipFile(file);
 		// String newPath = zipFile.substring(0, zipFile.length() - 4);
-		// new File(newPath).mkdir();
+		new File(unzipPath).mkdirs();
 		Enumeration zipFileEntries = zip.entries();
 		// Process each entry
 		while (zipFileEntries.hasMoreElements()) {
 			// grab a zip file entry
 			ZipEntry entry = (ZipEntry) zipFileEntries.nextElement();
 			String currentEntry = entry.getName();
-			System.out.println("==" + currentEntry);
 			File destFile = new File(unzipPath, currentEntry);
 			// destFile = new File(newPath, destFile.getName());
 			File destinationParent = destFile.getParentFile();
@@ -62,7 +60,7 @@ public class ZipUtils {
 				extractFolder(destFile.getAbsolutePath(), unzipPath);
 			}
 			if(currentEntry.endsWith(".gz")) {
-				gunzipIt(destFile.getAbsolutePath(), unzipPath);
+				gunzipIt(destFile.getAbsolutePath(), unzipPath+File.separator+currentEntry.replace(".gz", ""));
 			}
 		}
 	}
@@ -77,7 +75,7 @@ public class ZipUtils {
 		byte[] buffer = new byte[1024];
 		try {
 			GZIPInputStream gzis = new GZIPInputStream(new FileInputStream(gzFilePath));
-			FileOutputStream out = new FileOutputStream(new File(newPath+"\\tt.txt"));
+			FileOutputStream out = new FileOutputStream(new File(newPath));
 			int len;
 			while ((len = gzis.read(buffer)) > 0) {
 				out.write(buffer, 0, len);
