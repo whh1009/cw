@@ -40,12 +40,12 @@
         language: "zh",
         uploadUrl: "${ctx }/import/uploadAppStoreExcel",
         maxFilesNum: 1,
-        allowedFileExtensions : ["xlsx","xls"],
+        allowedFileExtensions : ["zip"],
     });
 	$(function() {
 		$("#file").on("fileuploaded", function(event, data, previewId, index) {
 			$.ajax({
-				url:"${ctx }/import/saveAppStoreExcel",
+				url:"${ctx }/import/saveAppStoreBook",
 				type:"post",
 				dataType:"json",
 				beforeSend: function () {

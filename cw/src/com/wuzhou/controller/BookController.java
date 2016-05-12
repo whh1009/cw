@@ -147,4 +147,23 @@ public class BookController extends Controller {
 			log.error(ex);
 		}
 	}
+	
+	/**
+	 * 图书价格列表
+	 */
+	public void bookPriceList() {
+		render("/BookPriceList.jsp");
+	}
+	
+	public void getBookPriceList() {
+		String mySearchSql = getPara("mySearchSql", "1=1");
+		int pageNumber = getParaToInt("page", 1);
+		try {
+			renderJson(service.getBookPiceList(pageNumber, mySearchSql, 1));
+		} catch(Exception ex) {
+			renderJson("-1");
+			ex.printStackTrace();
+			log.error(ex);
+		}
+	}
 }

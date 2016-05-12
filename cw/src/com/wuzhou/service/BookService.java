@@ -1,6 +1,7 @@
 package com.wuzhou.service;
 
 import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
 import com.wuzhou.model.BookBaseModel;
 
 public class BookService {
@@ -45,5 +46,10 @@ public class BookService {
 	 */
 	public boolean deleteBookById(int bookId) {
 		return BookBaseModel.dao.deleteBookById(bookId);
+	}
+
+	public Page<Record> getBookPiceList(int pageNumber, String mySearchSql, int i) {
+		//mySearchSql += " and book_status=1 order by id desc";
+		return null;
 	}
 }

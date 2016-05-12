@@ -10,6 +10,7 @@ import com.jfinal.core.Controller;
 import com.jfinal.kit.PathKit;
 import com.jfinal.upload.UploadFile;
 import com.wuzhou.Result;
+import com.wuzhou.config.Constraint;
 import com.wuzhou.service.ExcelImportService;
 import com.wuzhou.service.ExcelMapService;
 import com.wuzhou.service.UserService;
@@ -102,12 +103,12 @@ public class ExcelImportController extends Controller{
 	public void uploadAppStoreExcel() {
 		UploadFile file = getFile("file");
 		String uploadExcelName = file.getOriginalFileName();
-		String serverExcelName = new Date().getTime()+".xlsx";
+		String serverExcelName = new Date().getTime()+".zip";
 		String filePath = PathKit.getWebRootPath()+File.separator+"uploadFiles"+File.separator+serverExcelName;
 		file.getFile().renameTo(new File(filePath));
 		try{
 			excelMapService.addExcelMap(uploadExcelName, serverExcelName, 2);
-			setSessionAttr("excelAmazonPath", filePath);
+			setSessionAttr("appStorePath", filePath);
 			renderJson("0");
 		} catch(Exception ex) {
 			ex.printStackTrace();
@@ -152,6 +153,29 @@ public class ExcelImportController extends Controller{
 		}
 		try{
 			int out = service.parserAmazonUSExcel(excelPath.toString());
+			result.setStatus(true);
+			result.setMessage("共入库["+out+"]本");
+		} catch(Exception ex) {
+			ex.printStackTrace();
+			result.setStatus(false);
+			result.setMessage(ex.getMessage());
+			log.error(ex);
+		}
+		renderJson(result);
+	}
+	
+	/**
+	 * 
+	 */
+	public void saveAppStoreBook() {
+		Object appZipPath = getSessionAttr("appStorePath");
+		if(appZipPath==null) {
+			result.setStatus(false);
+			result.setMessage("未加载到AppStore的文件");
+			return;
+		}
+		try{
+			int out = service.parserAppStoreZip(appZipPath.toString(), PathKit.getWebRootPath()+File.separator+Constraint.UNZIP_FOLD);
 			result.setStatus(true);
 			result.setMessage("共入库["+out+"]本");
 		} catch(Exception ex) {

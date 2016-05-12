@@ -132,7 +132,7 @@ $(function() {
 						</ul>
 					</li>
 					<li><a href="${ctx }/book/bookList"><i class='glyphicon glyphicon-tasks'></i>&nbsp;图书列表</a></li>
-					<%-- <li><a href="${ctx }/importBaseBookPage">图书基本信息导入</a></li> --%>
+					<li><a href="${ctx }/book/bookPriceList">图书价格列表</a></li>
 				</ul>
 				<!-- 
 				<form class="navbar-form navbar-left" role="search">

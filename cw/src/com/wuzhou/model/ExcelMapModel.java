@@ -23,6 +23,6 @@ public class ExcelMapModel extends Model<ExcelMapModel> {
 	 * @return
 	 */
 	public List<ExcelMapModel> getExcelList() {
-		return find("select * from excel_map order by id desc");
+		return find("select * from excel_map where type = 1 order by id desc");
 	}
 }

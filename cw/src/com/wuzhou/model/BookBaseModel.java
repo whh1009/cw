@@ -5,6 +5,7 @@ import java.util.List;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Model;
 import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
 
 public class BookBaseModel extends Model<BookBaseModel> {
 	public static final BookBaseModel dao = new BookBaseModel();
@@ -22,6 +23,10 @@ public class BookBaseModel extends Model<BookBaseModel> {
 	public Page<BookBaseModel> getBookList(int pageNumber, String condition) {
 		System.out.println("select * from book_base where "+condition);
 		return this.paginate(pageNumber, 15, "select * ", "from book_base where "+condition);
+	}
+	
+	public Page<Record> getBookPriceList(int pageNumber) {
+		return Db.paginate(pageNumber, 15, "select b.book_name,s.sale_time, s.platform, s.sale_total_price, s.sale_total_count", "from book_base b, book_sale s where b.book_status = 1 and b.book_isbn=s.book_isbn");
 	}
 	
 	/**

@@ -100,7 +100,7 @@ public class ExcelImportService {
 	 */
 	public int parserAmazonUSExcel(String excelPath) throws Exception{
 		Workbook wb = POITools.getWorkbook(excelPath);
-		String name = new File(excelPath).getName().replace(".xlsx", "");
+		String name = wb.getSheetName(0);
 		Sheet sheet = POITools.getSheet(0, wb); //第一个sheet
 		Row row = null;
 		List<String> sqlList = new ArrayList<String>();
@@ -134,7 +134,7 @@ public class ExcelImportService {
 	 * @param unzipPath
 	 * @throws Exception
 	 */
-	public void parserAppStoreZip(String zipPath, String unzipPath) throws Exception {
+	public int parserAppStoreZip(String zipPath, String unzipPath) throws Exception {
 		ZipUtils.extractFolder(zipPath, unzipPath);
 		String txtPath = "";
 		for (File file : new File(unzipPath).listFiles()) {
@@ -145,17 +145,17 @@ public class ExcelImportService {
 			}
 		}
 		if ("".equals(txtPath))
-			return;
+			return 0;
 		Map<String, Info> map = parserTxt(txtPath);
 		if (map == null || map.isEmpty())
-			return;
+			return 0;
 		String saleTime = getAppStoreFileDate(txtPath);
 		List<String> sqlList = new ArrayList<String>();
 		Set<String> set = map.keySet();
 		for (String s : set) {
 			String sql = "";
 			Info info = map.get(s);
-			sql = "insert into book_sale (book_isbn, sale_time, sale_total_price, sale_total_count, book_name, platform) "
+			sql = "insert ignore into book_sale (book_isbn, sale_time, sale_total_price, sale_total_count, book_name, platform) "
 					+ "values ('"+info.getIsbn()+"', '"+saleTime+"', "+info.getPrice()+", "+info.getCount()+", '"+info.getTile()+"', 3)";
 			sqlList.add(sql);
 		}
@@ -164,9 +164,14 @@ public class ExcelImportService {
 			System.out.println(sql);
 		}
 		FileUtil.deleteSubFiles(new File(unzipPath));
-		
+		return BookSaleModel.dao.batchImport(sqlList).length;
 	}
 	
+	/**
+	 * 解析appstore txt的正文内容
+	 * @param txtPath
+	 * @return
+	 */
 	private static Map<String, Info> parserTxt(String txtPath) {
 		Map<String, Info> map = new HashMap<String, Info>();
 		File file = new File(txtPath);
@@ -216,6 +221,7 @@ public class ExcelImportService {
 	 * @return
 	 */
 	private String getDate(String str) {
+		str = str.replaceAll("[a-zA-Z ]+", "");
 		str = str.substring(str.indexOf("-")+1);
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
 		Date date;
