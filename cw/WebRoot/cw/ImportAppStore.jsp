@@ -24,7 +24,7 @@
 		<div class="row">
 			<blockquote>
 				<h3>提示：</h3>
-				<p></p>
+				<p>请上传app stroe官方下载的账单zip</p>
 			</blockquote>
 		</div>
 		<div class="row">

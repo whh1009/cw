@@ -1,8 +1,11 @@
 package com.wuzhou.service;
 
+import java.util.List;
+
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.wuzhou.model.BookBaseModel;
+import com.wuzhou.model.BookSaleModel;
 
 public class BookService {
 
@@ -49,7 +52,11 @@ public class BookService {
 	}
 
 	public Page<Record> getBookPiceList(int pageNumber, String mySearchSql, int i) {
-		//mySearchSql += " and book_status=1 order by id desc";
-		return null;
+		mySearchSql += " order by id desc";
+		return BookSaleModel.dao.getBookSaleList(pageNumber, mySearchSql);
+	}
+	
+	public List<BookSaleModel> getDisTinctSaleTime() {
+		return BookSaleModel.dao.getDisTinctSaleTime();
 	}
 }

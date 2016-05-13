@@ -32,6 +32,7 @@ public class WZConfig extends JFinalConfig {
 		PropKit.use("db_config.txt");
 		me.setViewType(ViewType.JSP);
 		me.setUploadedFileSaveDirectory("uploadFiles" + File.separator);
+		me.setDevMode(true);
 	}
 
 	@Override

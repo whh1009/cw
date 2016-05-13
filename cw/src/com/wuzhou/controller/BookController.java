@@ -152,14 +152,27 @@ public class BookController extends Controller {
 	 * 图书价格列表
 	 */
 	public void bookPriceList() {
-		render("/BookPriceList.jsp");
+		render("/cw/BookPriceList.jsp");
 	}
 	
+	/**
+	 * 图书月份售价列表
+	 */
 	public void getBookPriceList() {
-		String mySearchSql = getPara("mySearchSql", "1=1");
+		String mySearchSql = getPara("mySearchSql", "");
 		int pageNumber = getParaToInt("page", 1);
 		try {
 			renderJson(service.getBookPiceList(pageNumber, mySearchSql, 1));
+		} catch(Exception ex) {
+			renderJson("-1");
+			ex.printStackTrace();
+			log.error(ex);
+		}
+	}
+	
+	public void getDisTinctSaleTime() {
+		try {
+			renderJson(service.getDisTinctSaleTime());
 		} catch(Exception ex) {
 			renderJson("-1");
 			ex.printStackTrace();

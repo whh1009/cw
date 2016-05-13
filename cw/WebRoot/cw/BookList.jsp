@@ -3,8 +3,6 @@
 String path = request.getContextPath();
 String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
 %>
-
-<!DOCTYPE HTML>
 <html>
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -22,49 +20,8 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		}
 	</style>
 	
-	
 	<link href="${ctx }/css/showLoading.css" rel="stylesheet">
 	<script src="${ctx }/js/jquery.showLoading.min.js"></script>
-	
-	<script type="text/javascript">
-	
-	
-	
-	
-	
-	function exportExcelData() {
-		/*
-		$.ajax({
-			url:"${ctx}/exportDataByBookName",
-			data:{searchCondition:_searchCondition, searchVal:_searchVal, userId:_userId},
-			type:"post",
-			dataType:"text",
-			beforeSend: function () {
-				$("body").showLoading();
-			},
-			success:function(data) {
-				$("body").hideLoading();
-				if(data=="") {
-					alert("生成excel失败");
-				} else {
-					window.location.href="${ctx}/downExcel?fileName="+data;
-				}
-			},
-			error:function(XMLHttpRequest, textStatus, errorThrown) {
-				console.log(XMLHttpRequest);
-				console.log(textStatus);
-				console.log(errorThrown);
-				$("body").hideLoading();
-			}
-		})
-		*/
-	}
-	
-	
-	
-	
-	
-	</script>
   </head>
   
   <body>

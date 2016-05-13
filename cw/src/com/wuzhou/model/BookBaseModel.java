@@ -22,12 +22,12 @@ public class BookBaseModel extends Model<BookBaseModel> {
 	 */
 	public Page<BookBaseModel> getBookList(int pageNumber, String condition) {
 		System.out.println("select * from book_base where "+condition);
-		return this.paginate(pageNumber, 15, "select * ", "from book_base where "+condition);
+		return this.paginate(pageNumber, 20, "select * ", "from book_base where "+condition);
 	}
 	
-	public Page<Record> getBookPriceList(int pageNumber) {
-		return Db.paginate(pageNumber, 15, "select b.book_name,s.sale_time, s.platform, s.sale_total_price, s.sale_total_count", "from book_base b, book_sale s where b.book_status = 1 and b.book_isbn=s.book_isbn");
-	}
+//	public Page<Record> getBookPriceList(int pageNumber) {
+//		return Db.paginate(pageNumber, 15, "select b.book_name,s.sale_time, s.platform, s.sale_total_price, s.sale_total_count", "from book_base b, book_sale s where b.book_status = 1 and b.book_isbn=s.book_isbn");
+//	}
 	
 	/**
 	 * 更新图书状态
