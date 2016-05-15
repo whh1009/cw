@@ -30,7 +30,15 @@ public class BookSaleModel extends Model<BookSaleModel> {
 		return Db.paginate(pageNumber, 20, "select *", "from book_sale where 1=1 " + mySearchSql);
 	}
 
-	public List<BookSaleModel> getDisTinctSaleTime() {
+	public List<BookSaleModel> getDistinctSaleTime() {
 		return this.find("select DISTINCT(sale_time) from book_sale");
+	}
+	
+	public List<BookSaleModel> getDistinctPlatform() {
+		return this.find("select distinct(platform) from book_sale");
+	}
+	
+	public Record getBookPriceCount(String mySearchSql) {
+		return Db.findFirst("select truncate(sum(sale_total_price), 2) as price, sum(sale_total_count) as count from book_sale where 1=1 ");
 	}
 }

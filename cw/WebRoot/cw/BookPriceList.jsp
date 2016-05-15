@@ -18,8 +18,8 @@ table {
 	font-size: 90%;
 }
 
-.input-group,.col-lg-3 {
-	margin-top: 1em;
+.form-group {
+	margin-right: 3em;
 }
 </style>
 
@@ -35,15 +35,28 @@ table {
 	<jsp:include page="_header.jsp"></jsp:include>
 	<div class="container">
 		<div class="row">
-			<div class="col-sm-3">
-				<select class="form-control" id="saleTimeSel" onchange="changeSaleTime()">
-					<option value="0">请选择月份</option>
-				</select>
-			</div>
-			<div class="col-sm-3">
-				<button class="btn btn-success" onclick="importData()">导出</button>
-			</div>
+			<form class="form-inline">
+				<div class="form-group">
+					<label>平台：</label>
+					<select class="form-control" id="platformSel">
+						<option value="0">请选择平台</option>
+					</select>
+				</div>
+				<div class="form-group">
+					<label>时间：</label>
+					<select class="form-control" id="saleTimeSel">
+						<option value="0">请选择月份</option>
+					</select>
+				</div>
+				<div class="form-group">
+					<button class="btn btn-success" onclick="initSearch(1)"><i class="glyphicon glyphicon-search"></i>&nbsp;检索</button>
+				</div>
+				<div class="form-group">
+					<button class="btn btn-info" onclick="importData()"><i class="glyphicon glyphicon-import"></i>&nbsp;导出</button>
+				</div>
+			</form>
 		</div>
+		<div id="priceCountDiv"></div>
 		<div class="row">
 			<table class="table table-hover" id="tableContent">
 				<thead></thead>
@@ -56,13 +69,35 @@ table {
 		var _page = 1;
 		var _mySearchSql= "";
 		$(function() {
+			initPlatform();
 			initSaleTime();
 			initTableHeader();
 			initTableBody();
 		});
 		
+		//初始化第三方平台
+		function initPlatform() {
+			$.post("${ctx}/book/getDistinctPlatform", {}, function(data) {
+				var platformSel = "<option value='0'>请选择平台</option>";
+				if(data) {
+					for(var i=0;i<data.length;i++){
+						if(data[i].platform==1) {
+							platformSel+="<option value='1'>亚马逊美国</option>";
+						} else if(data[i].platform==2) {
+							platformSel+="<option value='2'>亚马逊中国</option>";
+						} else if(data[i].platform==3){
+							platformSel+="<option value='3'>App Store</option>";
+						} else if(data[i].platform==4) {
+							platformSel+="<option value='4'>That's Books</option>";
+						}
+					}
+				}
+				$("#platformSel").html(platformSel);
+			});
+		}
+		
 		function initSaleTime() {
-			$.post("${ctx}/book/getDisTinctSaleTime", {}, function(data) {
+			$.post("${ctx}/book/getDistinctSaleTime", {}, function(data) {
 				var saleTimeSel = "<option value='0'>请选择月份</option>";
 				if(data) {
 					for(var i=0;i<data.length;i++){
@@ -73,12 +108,18 @@ table {
 			});
 		}
 		
-		function changeSaleTime() {
-			_page = 1;
+		function initPriceCount() {
 			var saleTime = $("#saleTimeSel").val();
-			if(saleTime=="0"||saleTime=="") return;
-			_mySearchSql = " and sale_time = "+saleTime;
-			initSearch(1);
+			var platform = $("#platformSel").val();
+			if(saleTime!="0"&&saleTime!="") {
+				_mySearchSql += " and sale_time = "+saleTime;
+			}
+			if(platform!="0"&&platform!="") {
+				_mySearchSql += " and platform = " + platform;
+			}
+			$.post("${ctx}/book/getBookPriceCount", {mySearchSql:_mySearchSql}, function(data){
+				$("#priceCountDiv").html("<div class='alert alert-info' role='alert'><strong>汇总</strong>&nbsp;&nbsp;&nbsp;&nbsp;总数："+data.count+"&nbsp;&nbsp;&nbsp;&nbsp;总价："+data.price+"</div>");
+			});
 		}
 		
 		//初始化表格标题
@@ -89,15 +130,23 @@ table {
 		
 		//初始化表格正文
 		function initTableBody() {
-			_page = 1;
 			initSearch(1);
 		}
 		
 		function initSearch(page) {
+			_mySearchSql = "";
+			var saleTime = $("#saleTimeSel").val();
+			var platform = $("#platformSel").val();
+			if(saleTime!="0"&&saleTime!="") {
+				_mySearchSql += " and sale_time = "+saleTime;
+			}
+			if(platform!="0"&&platform!="") {
+				_mySearchSql += " and platform = " + platform;
+			}
 			$.ajax({
 				url:"${ctx}/book/getBookPriceList",
 				method:"POST",
-				data:{page:_page, mySearchSql: _mySearchSql},
+				data:{page:page, mySearchSql: _mySearchSql},
 				beforeSend:function() {
 					$("#tableContent").showLoading();
 				},
@@ -125,6 +174,10 @@ table {
 							}
 							$("#tableContent tbody").html(content);
 							initPage(data.pageNumber, data.totalPage, data.totalRow);
+							initPriceCount();
+						} else {
+							$("#tableContent tbody").html("<tr><td><font color='red'>暂无数据</font></td></tr>");
+							$("#page").html("");
 						}
 					}
 				},

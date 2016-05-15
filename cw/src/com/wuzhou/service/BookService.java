@@ -51,12 +51,20 @@ public class BookService {
 		return BookBaseModel.dao.deleteBookById(bookId);
 	}
 
-	public Page<Record> getBookPiceList(int pageNumber, String mySearchSql, int i) {
+	public Page<Record> getBookPiceList(int pageNumber, String mySearchSql) {
 		mySearchSql += " order by id desc";
 		return BookSaleModel.dao.getBookSaleList(pageNumber, mySearchSql);
 	}
 	
-	public List<BookSaleModel> getDisTinctSaleTime() {
-		return BookSaleModel.dao.getDisTinctSaleTime();
+	public List<BookSaleModel> getDistinctSaleTime() {
+		return BookSaleModel.dao.getDistinctSaleTime();
+	}
+	
+	public List<BookSaleModel> getDistinctPlatform() {
+		return BookSaleModel.dao.getDistinctPlatform();
+	}
+	
+	public Record getBookPriceCount(String mySearchSql) {
+		return BookSaleModel.dao.getBookPriceCount(mySearchSql);
 	}
 }

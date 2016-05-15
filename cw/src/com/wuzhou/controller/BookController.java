@@ -162,7 +162,7 @@ public class BookController extends Controller {
 		String mySearchSql = getPara("mySearchSql", "");
 		int pageNumber = getParaToInt("page", 1);
 		try {
-			renderJson(service.getBookPiceList(pageNumber, mySearchSql, 1));
+			renderJson(service.getBookPiceList(pageNumber, mySearchSql));
 		} catch(Exception ex) {
 			renderJson("-1");
 			ex.printStackTrace();
@@ -170,9 +170,30 @@ public class BookController extends Controller {
 		}
 	}
 	
-	public void getDisTinctSaleTime() {
+	public void getDistinctSaleTime() {
 		try {
-			renderJson(service.getDisTinctSaleTime());
+			renderJson(service.getDistinctSaleTime());
+		} catch(Exception ex) {
+			renderJson("-1");
+			ex.printStackTrace();
+			log.error(ex);
+		}
+	}
+	
+	public void getDistinctPlatform() {
+		try {
+			renderJson(service.getDistinctPlatform());
+		} catch(Exception ex) {
+			renderJson("-1");
+			ex.printStackTrace();
+			log.error(ex);
+		}
+	}
+	
+	public void getBookPriceCount() {
+		String mySearchSql = getPara("mySearchSql");
+		try {
+			renderJson(service.getBookPriceCount(mySearchSql));
 		} catch(Exception ex) {
 			renderJson("-1");
 			ex.printStackTrace();
