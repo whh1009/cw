@@ -29,6 +29,11 @@ public class ExcelImportController extends Controller{
 	
 	Result result = new Result();
 	
+	public void test() {
+		UploadFile file = getFile("file");
+		render("/cw/ShowExcelPage.jsp");
+	}
+	
 	/**
 	 * 图书基本信息导入页面
 	 */
