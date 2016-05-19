@@ -20,6 +20,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
+import com.wuzhou.bean.AmazonUSEntity;
 import com.wuzhou.model.BookBaseModel;
 import com.wuzhou.model.BookSaleModel;
 import com.wuzhou.tool.FileUtil;
@@ -92,6 +93,29 @@ public class ExcelImportService {
 		} else {
 			return str;
 		}
+	}
+	
+	public List<AmazonUSEntity> parserAmazonUSExcelToList(String excelPath) throws Exception{
+		Workbook wb = POITools.getWorkbook(excelPath);
+		String name = wb.getSheetName(0);
+		Sheet sheet = POITools.getSheet(0, wb); //第一个sheet
+		Row row = null;
+		String saleTime = getDate(name.substring(name.lastIndexOf("_")+1));
+		List<AmazonUSEntity> list = new ArrayList<AmazonUSEntity>();
+		for(int rowNumber = 1; rowNumber<POITools.getRowCount(sheet);rowNumber++) { //第一行标题行，从第二行开始
+			row = POITools.getRow(sheet, rowNumber);
+			if("".equals(POITools.getCellValue(row.getCell(0)))) break; //如果读到空行就返回
+			AmazonUSEntity aus = new AmazonUSEntity();
+			aus.setIsbn(POITools.getCellValue(row.getCell(3)));
+			aus.setBookName(POITools.getCellValue(row.getCell(5)));
+			aus.setBookAuthor(POITools.getCellValue(row.getCell(6)));
+			aus.setSaleCount("".equals(POITools.getCellValue(row.getCell(12)))?"0.0":POITools.getCellValue(row.getCell(12)));
+			aus.setSalePrice("".equals(POITools.getCellValue(row.getCell(21)))?"0.0":POITools.getCellValue(row.getCell(21)));
+			aus.setPlatform("亚马逊美国");
+			aus.setSaleTime(saleTime);
+			list.add(aus);
+		}
+		return list;
 	}
 	
 	/**

@@ -28,20 +28,40 @@
 			</blockquote>
 		</div>
 		<div class="row">
-			<div class="form-group">
+			<form class="form-group" action="${ctx }/import/uploadAmazonUSBookExcel" method="post" enctype="multipart/form-data" onsubmit="return checkFile()">
 	            <input id="file" name="file" type="file" class="file" data-preview-file-type="text">
-	        </div>
+	            <br />
+	            <input type="submit" class="btn btn-success" value="上传" />
+	            <input type="reset" class="btn" value="取消" />
+	        </form>
         </div>
 	</div>
 	
 	<script>
+	function checkFile() {
+		 var file = $("#file").val();
+		 if(file==null||file==undefined||file=="") {
+			 alert("请至少选择一个excel");
+			 return false;
+		 } else {
+			 var ext = file.substring(file.lastIndexOf(".")+1, file.length).toLowerCase();
+			 if(ext=="xlsx"||ext=="xls") {
+				 return true;
+			 } else {
+				 alert("亲，只能上传07版本以上excel哦");
+				 return false;
+			 }
+		 }
+	 }
+	$(function() {
+		$("#file").fileinput({
+	        language: "zh",
+	        maxFilesNum: 1,
+	        allowedFileExtensions : ["xlsx","xls"],
+	    });
+	});
 	
-	$("#file").fileinput({
-        language: "zh",
-        uploadUrl: "${ctx }/import/uploadAmazonUSBookExcel",
-        maxFilesNum: 1,
-        allowedFileExtensions : ["xlsx","xls"],
-    });
+	/*
 	$(function() {
 		$("#file").on("fileuploaded", function(event, data, previewId, index) {
 			$.ajax({
@@ -66,7 +86,7 @@
 			});
 		});
 	});
-	
+	*/
 	</script>
 </body>
 </html>

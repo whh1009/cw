@@ -2,11 +2,13 @@ package com.wuzhou.controller;
 
 import java.io.File;
 import java.util.Date;
+import java.util.UUID;
 
 import org.apache.log4j.Logger;
 
 import com.jfinal.aop.Enhancer;
 import com.jfinal.core.Controller;
+import com.jfinal.kit.JsonKit;
 import com.jfinal.kit.PathKit;
 import com.jfinal.upload.UploadFile;
 import com.wuzhou.Result;
@@ -83,18 +85,44 @@ public class ExcelImportController extends Controller{
 	public void uploadAmazonUSBookExcel() {
 		UploadFile file = getFile("file");
 		String uploadExcelName = file.getOriginalFileName();
-		String serverExcelName = new Date().getTime()+".xlsx";
-		String filePath = PathKit.getWebRootPath()+File.separator+"uploadFiles"+File.separator+serverExcelName;
+		String serverExcelName = UUID.randomUUID().toString()+".xlsx";
+//		String filePath = PathKit.getWebRootPath()+File.separator+"uploadFiles"+File.separator+serverExcelName;
+		String filePath = file.getSaveDirectory()+serverExcelName;
 		file.getFile().renameTo(new File(filePath));
 		try{
 			excelMapService.addExcelMap(uploadExcelName, serverExcelName, 2);
-			setSessionAttr("excelAmazonPath", filePath);
-			renderJson("0");
+			redirect("/import/showMyExcel?n="+serverExcelName+"&t=2");
 		} catch(Exception ex) {
 			ex.printStackTrace();
 			renderJson(ex.getMessage());
 			log.error(ex);
 		}
+	}
+	
+	public void showMyExcel() {
+		String excelName = getPara("n", ""); 
+		String type = getPara("t", ""); //第三方excel
+		if("".equals(excelName)||"".equals(type)) {
+			setAttr("result","");
+			render("/cw/MyExcel.jsp");
+		} else {
+			if("2".equals(type)) { //亚马逊美国
+				try {
+					setAttr("result", JsonKit.toJson(service.parserAmazonUSExcelToList(PathKit.getWebRootPath()+File.separator+"uploadFiles"+File.separator+excelName)));
+				} catch (Exception e) {
+					renderJson(e.getMessage());
+					e.printStackTrace();
+				}
+			} else if("3".equals(type)) { //亚马逊中国
+				
+			} else if("4".equals(type)) { //appStore
+				
+			} else if("5".equals(type)) { //That's books
+				
+			}
+				
+		}
+		render("/cw/MyExcel.jsp");
 	}
 	
 	/**
@@ -107,7 +135,7 @@ public class ExcelImportController extends Controller{
 		String filePath = PathKit.getWebRootPath()+File.separator+"uploadFiles"+File.separator+serverExcelName;
 		file.getFile().renameTo(new File(filePath));
 		try{
-			excelMapService.addExcelMap(uploadExcelName, serverExcelName, 2);
+			excelMapService.addExcelMap(uploadExcelName, serverExcelName, 4);
 			setSessionAttr("appStorePath", filePath);
 			renderJson("0");
 		} catch(Exception ex) {

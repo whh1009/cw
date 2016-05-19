@@ -163,11 +163,11 @@ table {
 								content+=    "<td>"+data.list[i].sale_time+"</td>";
 								content+=    "<td>"+data.list[i].sale_total_price+"</td>";
 								content+=    "<td>"+data.list[i].sale_total_count+"</td>";
-								if(data.list[i].platform==1) {
+								if(data.list[i].platform==2) {
 									content+="<td>亚马逊美国</td>";
-								} else if(data.list[i].platform==2) {
-									content+="<td>亚马逊中国</td>";
 								} else if(data.list[i].platform==3) {
+									content+="<td>亚马逊中国</td>";
+								} else if(data.list[i].platform==4) {
 									content+="<td>App Store</td>";
 								}
 								content+="</tr>";
