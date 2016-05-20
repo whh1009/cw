@@ -1,6 +1,7 @@
 package com.wuzhou.bean;
 
 public class AmazonUSEntity {
+	int id;
 	String isbn;
 	String bookName;
 	String bookAuthor;
@@ -8,6 +9,13 @@ public class AmazonUSEntity {
 	String saleCount;
 	String salePrice;
 	String platform;
+	
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
 	public String getIsbn() {
 		return isbn;
 	}

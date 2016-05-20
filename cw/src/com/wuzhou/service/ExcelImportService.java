@@ -19,6 +19,10 @@ import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import com.wuzhou.bean.AmazonUSEntity;
 import com.wuzhou.model.BookBaseModel;
@@ -102,10 +106,13 @@ public class ExcelImportService {
 		Row row = null;
 		String saleTime = getDate(name.substring(name.lastIndexOf("_")+1));
 		List<AmazonUSEntity> list = new ArrayList<AmazonUSEntity>();
+		int count = 0;
 		for(int rowNumber = 1; rowNumber<POITools.getRowCount(sheet);rowNumber++) { //第一行标题行，从第二行开始
 			row = POITools.getRow(sheet, rowNumber);
 			if("".equals(POITools.getCellValue(row.getCell(0)))) break; //如果读到空行就返回
+			count++;
 			AmazonUSEntity aus = new AmazonUSEntity();
+			aus.setId(count);
 			aus.setIsbn(POITools.getCellValue(row.getCell(3)));
 			aus.setBookName(POITools.getCellValue(row.getCell(5)));
 			aus.setBookAuthor(POITools.getCellValue(row.getCell(6)));
@@ -116,6 +123,25 @@ public class ExcelImportService {
 			list.add(aus);
 		}
 		return list;
+	}
+	
+	public int[] saveExcel(String xml) {
+		try {
+			Document doc = Jsoup.parse(xml);
+			Elements eles = doc.select("item");
+			List<String> sqlList = new ArrayList<String>();
+			for(Element ele : eles) {
+				sqlList.add("insert ignore into book_sale (sale_time, book_isbn, book_name, book_author, sale_total_count, sale_total_price, platform) values "
+						+ "('"+ele.attr("saleTime")+"', '"+ele.attr("isbn")+"', '"+ele.attr("bookName")+"', '"+ele.attr("bookAuthor")+"', "+ele.attr("saleCount")+", "+ele.attr("salePrice")+", '"+ele.attr("platform")+"')");
+			}
+			for(String str : sqlList) {
+				log.warn(str);
+			}
+			return BookSaleModel.dao.batchImport(sqlList);
+		} catch(Exception ex) {
+			ex.printStackTrace();
+			return null;
+		}
 	}
 	
 	/**

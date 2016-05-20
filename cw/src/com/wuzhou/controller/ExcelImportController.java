@@ -106,23 +106,32 @@ public class ExcelImportController extends Controller{
 			setAttr("result","");
 			render("/cw/MyExcel.jsp");
 		} else {
-			if("2".equals(type)) { //亚马逊美国
-				try {
+			try {
+				if("2".equals(type)) { //亚马逊美国
 					setAttr("result", JsonKit.toJson(service.parserAmazonUSExcelToList(PathKit.getWebRootPath()+File.separator+"uploadFiles"+File.separator+excelName)));
-				} catch (Exception e) {
-					renderJson(e.getMessage());
-					e.printStackTrace();
+				} else if("3".equals(type)) { //亚马逊中国
+					
+				} else if("4".equals(type)) { //appStore
+					
+				} else if("5".equals(type)) { //That's books
+					
 				}
-			} else if("3".equals(type)) { //亚马逊中国
-				
-			} else if("4".equals(type)) { //appStore
-				
-			} else if("5".equals(type)) { //That's books
-				
+			} catch(Exception ex) {
+				setAttr("result", JsonKit.toJson(ex.getMessage()));
+				ex.printStackTrace();
 			}
 				
 		}
 		render("/cw/MyExcel.jsp");
+	}
+	
+	public void saveExcel() {
+		String xml = getPara("xml", "");
+		if("".equals(xml)) {
+			renderJson("0");
+		} else {
+			renderJson(service.saveExcel(xml));
+		}
 	}
 	
 	/**
