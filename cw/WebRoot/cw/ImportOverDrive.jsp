@@ -7,7 +7,7 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta charset="utf-8">
-<title>${title }--AppStore</title>
+<title>${title }--OverDrive</title>
 <link rel="shortcut icon" href="${ctx }/favicon.ico" />
 <link href="${ctx }/css/fileinput.css" rel="stylesheet"/>
 <link href="${ctx }/css/showLoading.css" rel="stylesheet">
@@ -24,7 +24,7 @@
 		<div class="row">
 			<blockquote>
 				<h3>提示：</h3>
-				<p>请上传app stroe官方下载的账单zip</p>
+				<p><strong>请注意模版导入名称规范一定是：</strong></p>
 			</blockquote>
 		</div>
 		<div class="row">

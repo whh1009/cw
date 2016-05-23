@@ -24,6 +24,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import com.wuzhou.bean.AmazonCNEntity;
 import com.wuzhou.bean.AmazonUSEntity;
 import com.wuzhou.model.BookBaseModel;
 import com.wuzhou.model.BookSaleModel;
@@ -125,6 +126,32 @@ public class ExcelImportService {
 		return list;
 	}
 	
+	public List<AmazonUSEntity> parserAmazonCNExcelToList(String excelPath) throws Exception{
+		Workbook wb = POITools.getWorkbook(excelPath);
+		String name = wb.getSheetName(0);
+		Sheet sheet = POITools.getSheet(0, wb); //第一个sheet
+		Row row = null;
+		String saleTime = getDate(name.substring(name.lastIndexOf("_")+1));
+		List<AmazonUSEntity> list = new ArrayList<AmazonUSEntity>();
+		int count = 0;
+		for(int rowNumber = 1; rowNumber<POITools.getRowCount(sheet);rowNumber++) { //第一行标题行，从第二行开始
+			row = POITools.getRow(sheet, rowNumber);
+			if("".equals(POITools.getCellValue(row.getCell(0)))) break; //如果读到空行就返回
+			count++;
+			AmazonCNEntity acn = new AmazonCNEntity();
+			acn.setId(count);
+			acn.setIsbn(POITools.getCellValue(row.getCell(3)));
+			acn.setBookName(POITools.getCellValue(row.getCell(5)));
+			acn.setBookAuthor(POITools.getCellValue(row.getCell(6)));
+			acn.setSaleCount("".equals(POITools.getCellValue(row.getCell(12)))?"0.0":POITools.getCellValue(row.getCell(12)));
+			acn.setSalePrice("".equals(POITools.getCellValue(row.getCell(21)))?"0.0":POITools.getCellValue(row.getCell(21)));
+			acn.setPlatform("亚马逊中国");
+			acn.setSaleTime(saleTime);
+			list.add(acn);
+		}
+		return list;
+	}
+	
 	public int[] saveExcel(String xml) {
 		try {
 			Document doc = Jsoup.parse(xml);
@@ -148,35 +175,35 @@ public class ExcelImportService {
 	 * 解析亚马逊美国的excel
 	 * @param filePath
 	 */
-	public int parserAmazonUSExcel(String excelPath) throws Exception{
-		Workbook wb = POITools.getWorkbook(excelPath);
-		String name = wb.getSheetName(0);
-		Sheet sheet = POITools.getSheet(0, wb); //第一个sheet
-		Row row = null;
-		List<String> sqlList = new ArrayList<String>();
-		String isbn = "";
-		String bookName = "";
-		String bookAuthor = "";
-		String saleTime = getDate(name.substring(name.lastIndexOf("_")+1));
-		String saleCount = "";
-		String salePrice = "";
-		String platform = "1";
-		for(int rowNumber = 1; rowNumber<POITools.getRowCount(sheet);rowNumber++) { //第一行标题行，从第二行开始
-			row = POITools.getRow(sheet, rowNumber);
-			if("".equals(POITools.getCellValue(row.getCell(0)))) break; //如果读到空行就返回
-			isbn = POITools.getCellValue(row.getCell(3));
-			bookName = POITools.getCellValue(row.getCell(5)).replace("'", "''");
-			bookAuthor = POITools.getCellValue(row.getCell(6)).replace("'", "''");
-			saleCount = "".equals(POITools.getCellValue(row.getCell(12)))?"0.0":POITools.getCellValue(row.getCell(12));
-			salePrice = "".equals(POITools.getCellValue(row.getCell(21)))?"0.0":POITools.getCellValue(row.getCell(21));
-			sqlList.add("insert ignore into book_sale (sale_time, book_isbn, book_name, book_author, sale_total_count, sale_total_price, platform) values "
-					+ "('"+saleTime+"', '"+isbn+"', '"+bookName+"', '"+bookAuthor+"', "+saleCount+", "+salePrice+", '"+platform+"')");
-		}
-		for(String str : sqlList) {
-			log.warn(str);
-		}
-		return BookSaleModel.dao.batchImport(sqlList).length;
-	}
+//	public int parserAmazonUSExcel(String excelPath) throws Exception{
+//		Workbook wb = POITools.getWorkbook(excelPath);
+//		String name = wb.getSheetName(0);
+//		Sheet sheet = POITools.getSheet(0, wb); //第一个sheet
+//		Row row = null;
+//		List<String> sqlList = new ArrayList<String>();
+//		String isbn = "";
+//		String bookName = "";
+//		String bookAuthor = "";
+//		String saleTime = getDate(name.substring(name.lastIndexOf("_")+1));
+//		String saleCount = "";
+//		String salePrice = "";
+//		String platform = "1";
+//		for(int rowNumber = 1; rowNumber<POITools.getRowCount(sheet);rowNumber++) { //第一行标题行，从第二行开始
+//			row = POITools.getRow(sheet, rowNumber);
+//			if("".equals(POITools.getCellValue(row.getCell(0)))) break; //如果读到空行就返回
+//			isbn = POITools.getCellValue(row.getCell(3));
+//			bookName = POITools.getCellValue(row.getCell(5)).replace("'", "''");
+//			bookAuthor = POITools.getCellValue(row.getCell(6)).replace("'", "''");
+//			saleCount = "".equals(POITools.getCellValue(row.getCell(12)))?"0.0":POITools.getCellValue(row.getCell(12));
+//			salePrice = "".equals(POITools.getCellValue(row.getCell(21)))?"0.0":POITools.getCellValue(row.getCell(21));
+//			sqlList.add("insert ignore into book_sale (sale_time, book_isbn, book_name, book_author, sale_total_count, sale_total_price, platform) values "
+//					+ "('"+saleTime+"', '"+isbn+"', '"+bookName+"', '"+bookAuthor+"', "+saleCount+", "+salePrice+", '"+platform+"')");
+//		}
+//		for(String str : sqlList) {
+//			log.warn(str);
+//		}
+//		return BookSaleModel.dao.batchImport(sqlList).length;
+//	}
 	
 	/**
 	 * 

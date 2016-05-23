@@ -24,7 +24,7 @@
 		<div class="row">
 			<blockquote>
 				<h3>提示：</h3>
-				
+				<p><strong>请注意亚马逊美国模版导入名称规范一定是：CNICN_DigitalEBooksPaymentReport_20130131-20130228</strong><small><a href="${ctx }/temp/CNICN_DigitalEBooksPaymentReport_20160229-20160331.xls">点我下载模版</a></small></p>
 			</blockquote>
 		</div>
 		<!-- 
