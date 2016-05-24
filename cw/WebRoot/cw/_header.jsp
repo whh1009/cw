@@ -102,11 +102,28 @@
 	padding-left: 55px;
 	padding-right: 55px;
 }
+
 </style>
 <script>
 $(function() {
 	
 })
+
+function checkFile() {
+		 var file = $("#file").val();
+		 if(file==null||file==undefined||file=="") {
+			 alert("请至少选择一个excel");
+			 return false;
+		 } else {
+			 var ext = file.substring(file.lastIndexOf(".")+1, file.length).toLowerCase();
+			 if(ext=="xlsx"||ext=="xls") {
+				 return true;
+			 } else {
+				 alert("亲，建议上传07版本以上excel哦");
+				 return false;
+			 }
+		 }
+	 }
 </script>
 <!-- http://work.smarchal.com/twbscolor/css/e74c3cc0392becf0f1ffbbbc0 -->
 	<nav class="navbar navbar-default" role="navigation">
@@ -134,6 +151,7 @@ $(function() {
 					</li>
 					<li><a href="${ctx }/book/bookList"><i class='glyphicon glyphicon-tasks'></i>&nbsp;图书列表</a></li>
 					<li><a href="${ctx }/book/bookPriceList"><i class='glyphicon glyphicon-signal'></i>&nbsp;图书价格列表</a></li>
+					<li><a href="${ctx }/import/manageExcelList"><i class='glyphicon glyphicon-remove'></i>&nbsp;清理上传数据</a></li>
 				</ul>
 				<!-- 
 				<form class="navbar-form navbar-left" role="search">

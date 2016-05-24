@@ -1,6 +1,7 @@
 package com.wuzhou.controller;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Date;
 import java.util.UUID;
 
@@ -140,12 +141,14 @@ public class ExcelImportController extends Controller{
 			render("/cw/MyExcel.jsp");
 		} else {
 			try {
+				String uploadPath = PathKit.getWebRootPath()+File.separator+"uploadFiles"+File.separator;
+				setAttr("name", excelName);
 				if("2".equals(type)) { //亚马逊美国
-					setAttr("result", JsonKit.toJson(service.parserAmazonUSExcelToList(PathKit.getWebRootPath()+File.separator+"uploadFiles"+File.separator+excelName)));
+					setAttr("result", JsonKit.toJson(service.parserAmazonUSExcelToList(uploadPath+excelName)));
 				} else if("3".equals(type)) { //亚马逊中国
-					
+					setAttr("result", JsonKit.toJson(service.parserAmazonCNExcelToList(uploadPath+excelName)));
 				} else if("4".equals(type)) { //appStore
-					
+					setAttr("result", JsonKit.toJson(service.parserAppStoreZipToList(uploadPath+excelName)));
 				} else if("5".equals(type)) { //That's books
 					
 				} else if("6".equals(type)) { //overDrive
@@ -289,5 +292,41 @@ public class ExcelImportController extends Controller{
 //		}
 //		renderJson(result);
 //	}
+	
+	public void manageExcelList() {
+		render("/cw/ManageExcelList.jsp");
+	}
+	
+	public void getAllExcelList() {
+		renderJson(excelMapService.getExcelList(0));
+	}
+	
+	
+	public void removeExcel() {
+		String excelName= getPara("excelName");
+		try {
+			if("".equals(excelName)) {
+				renderJson("0");
+				return;
+			}
+			try {
+				new File(PathKit.getWebRootPath()+File.separator+"uploadFiles"+File.separator+excelName).deleteOnExit();
+			} catch(Exception e1) {
+				e1.printStackTrace();
+				log.error(e1);
+			}
+			try {
+				excelMapService.deleteExcel(excelName);
+			} catch(Exception e2) {
+				e2.printStackTrace();
+				log.error(e2);
+			}
+			renderJson("1");
+		} catch(Exception ex) {
+			ex.printStackTrace();
+			log.error(ex);
+			renderJson("-1");
+		}
+	}
 	
 }

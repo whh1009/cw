@@ -84,7 +84,7 @@ $(function() {
 				alert("请至少选择一行");
 			} else {
 				$("#table").showLoading();
-				var xml="<root>";
+				var xml="<root name='${name}'>";
 				for(var i=0;i<table.rows(".selected").data().length;i++) {
 					var data = table.rows(".selected").data()[i];
 					xml+="<item isbn='"+data.isbn+"' bookName='"+data.bookName+"' bookAuthor='"+data.bookAuthor+"' platform='"+data.platform+"' saleCount='"+data.saleCount+"' salePrice='"+data.salePrice+"' saleTime='"+data.saleTime+"' />";

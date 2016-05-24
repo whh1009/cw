@@ -28,45 +28,32 @@
 			</blockquote>
 		</div>
 		<div class="row">
-			<div class="form-group">
+			<form class="form-group" action="${ctx }/import/uploadExcel" method="post" enctype="multipart/form-data" onsubmit="return checkAppStoreFile()">
 	            <input id="file" name="file" type="file" class="file" data-preview-file-type="text">
-	        </div>
+	            <input type="hidden" name="t" value="4" />
+	            <br />
+	            <input type="submit" class="btn btn-success" value="上传" />
+	            <input type="reset" class="btn" value="取消" />
+	        </form>
         </div>
 	</div>
+	<script type="text/javascript">
 	
-	<script>
-	
-	$("#file").fileinput({
-        language: "zh",
-        uploadUrl: "${ctx }/import/uploadAppStoreExcel",
-        maxFilesNum: 1,
-        allowedFileExtensions : ["zip"],
-    });
-	$(function() {
-		$("#file").on("fileuploaded", function(event, data, previewId, index) {
-			$.ajax({
-				url:"${ctx }/import/saveAppStoreBook",
-				type:"post",
-				dataType:"json",
-				beforeSend: function () {
-					$("body").showLoading();
-				},
-				success:function(json) {
-					$("body").hideLoading();
-					if(json.status) {
-						alert("上传成功，"+json.message);
-					} else {
-						alert("上传失败，失败原因："+json.message);
-					}
-				},
-				error:function(XMLHttpRequest, textStatus, errorThrown) {
-					console.log(errorThrown);
-					$("body").hideLoading();
-				}
-			});
-		});
-	});
-	
+	function checkAppStoreFile() {
+		 var file = $("#file").val();
+		 if(file==null||file==undefined||file=="") {
+			 alert("请至少选择一个zip文件");
+			 return false;
+		 } else {
+			 var ext = file.substring(file.lastIndexOf(".")+1, file.length).toLowerCase();
+			 if(ext=="zip") {
+				 return true;
+			 } else {
+				 alert("亲，请上传一个zip文件哦");
+				 return false;
+			 }
+		 }
+	 }
 	</script>
 </body>
 </html>

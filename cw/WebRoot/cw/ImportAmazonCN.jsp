@@ -24,51 +24,18 @@
 		<div class="row">
 			<blockquote>
 				<h3>提示：</h3>
-				<p><strong>请注意亚马逊美国模版导入名称规范一定是：CNICN_DigitalEBooksPaymentReport_20130131-20130228</strong><small><a href="${ctx }/temp/CNICN_DigitalEBooksPaymentReport_20160229-20160331.xls">点我下载模版</a></small></p>
+				<p><strong>请注意亚马逊中国模板</strong></p>
 			</blockquote>
 		</div>
-		<!-- 
 		<div class="row">
-			<div class="form-group">
+			<form class="form-group" action="${ctx }/import/uploadExcel" method="post" enctype="multipart/form-data" onsubmit="return checkFile()">
 	            <input id="file" name="file" type="file" class="file" data-preview-file-type="text">
-	        </div>
+	            <input type="hidden" name="t" value="3" />
+	            <br />
+	            <input type="submit" class="btn btn-success" value="上传" />
+	            <input type="reset" class="btn" value="取消" />
+	        </form>
         </div>
-         -->
 	</div>
-	
-	<script>
-	
-	$("#file").fileinput({
-        language: "zh",
-        uploadUrl: "${ctx }/import/uploadAmazonUSBookExcel",
-        maxFilesNum: 1,
-        allowedFileExtensions : ["xlsx","xls"],
-    });
-	$(function() {
-		$("#file").on("fileuploaded", function(event, data, previewId, index) {
-			$.ajax({
-				url:"${ctx }/import/saveAmazonUSBookExcel",
-				type:"post",
-				dataType:"json",
-				beforeSend: function () {
-					$("body").showLoading();
-				},
-				success:function(json) {
-					$("body").hideLoading();
-					if(json.status) {
-						alert("上传成功，"+json.message);
-					} else {
-						alert("上传失败，失败原因："+json.message);
-					}
-				},
-				error:function(XMLHttpRequest, textStatus, errorThrown) {
-					console.log(errorThrown);
-					$("body").hideLoading();
-				}
-			});
-		});
-	});
-	
-	</script>
 </body>
 </html>
