@@ -1,98 +1,156 @@
 package com.wuzhou.tool;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Enumeration;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipException;
-import java.util.zip.ZipFile;
+import java.io.InputStreamReader;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 
 public class Test {
 
-	public static void extractFolder(String zipFile) throws ZipException, IOException {
-		System.out.println(zipFile);
-		int BUFFER = 2048;
-		File file = new File(zipFile);
-		ZipFile zip = new ZipFile(file);
-		// String newPath = zipFile.substring(0, zipFile.length() - 4);
-		// new File(newPath).mkdir();
-		String newPath = "j:\\test";
-		Enumeration zipFileEntries = zip.entries();
-		// Process each entry
-		while (zipFileEntries.hasMoreElements()) {
-			// grab a zip file entry
-			ZipEntry entry = (ZipEntry) zipFileEntries.nextElement();
-			String currentEntry = entry.getName();
-			System.out.println("==" + currentEntry);
-			File destFile = new File(newPath, currentEntry);
-			// destFile = new File(newPath, destFile.getName());
-			File destinationParent = destFile.getParentFile();
-
-			// create the parent directory structure if needed
-			destinationParent.mkdirs();
-
-			if (!entry.isDirectory()) {
-				BufferedInputStream is = new BufferedInputStream(zip.getInputStream(entry));
-				int currentByte;
-				// establish buffer for writing file
-				byte data[] = new byte[BUFFER];
-
-				// write the current file to disk
-				FileOutputStream fos = new FileOutputStream(destFile);
-				BufferedOutputStream dest = new BufferedOutputStream(fos, BUFFER);
-
-				// read and write until last byte is encountered
-				while ((currentByte = is.read(data, 0, BUFFER)) != -1) {
-					dest.write(data, 0, currentByte);
-				}
-				dest.flush();
-				dest.close();
-				is.close();
-			}
-
-			if (currentEntry.endsWith(".zip")) {
-				extractFolder(destFile.getAbsolutePath());
-			}
-			if(currentEntry.endsWith(".gz")) {
-				gunzipIt(destFile.getAbsolutePath(), newPath);
-			}
-		}
+	public static void main(String[] args) throws Exception {
+		parserAppStoreZip("j:/342e74e9-f10a-4bdb-bfc6-889b3606a1e7.zip",
+				"j:/test");
 	}
 
 	/**
-	 * GunZip it
+	 * 
+	 * @param zipPath
+	 * @param unzipPath
+	 * @throws Exception
 	 */
-	public static void gunzipIt(String gzFilePath, String newPath) {
-		byte[] buffer = new byte[1024];
-		try {
-			GZIPInputStream gzis = new GZIPInputStream(new FileInputStream(gzFilePath));
-			FileOutputStream out = new FileOutputStream(new File(newPath+"\\tt.txt"));
-			int len;
-			while ((len = gzis.read(buffer)) > 0) {
-				out.write(buffer, 0, len);
+	public static void parserAppStoreZip(String zipPath, String unzipPath)
+			throws Exception {
+		ZipUtils.extractFolder(zipPath, unzipPath);
+		String txtPath = "";
+		for (File file : new File(unzipPath).listFiles()) {
+			String filePath = file.getAbsolutePath();
+			if (filePath.endsWith(".txt")) {
+				txtPath = filePath;
+				break;
 			}
-			gzis.close();
-			out.close();
-			System.out.println("gz done");
-		} catch (IOException ex) {
-			ex.printStackTrace();
 		}
+		if ("".equals(txtPath))
+			return;
+		Map<String, Info> map = parserTxt(txtPath);
+		if (map == null || map.isEmpty())
+			return;
+		String saleTime = getAppStoreFileDate(txtPath);
+		List<String> sqlList = new ArrayList<String>();
+		Set<String> set = map.keySet();
+		for (String s : set) {
+			String sql = "";
+			Info info = map.get(s);
+			sql = "insert into book_sale (book_isbn, sale_time, sale_total_price, sale_total_count, book_name, platform) "
+					+ "values ('"+info.getIsbn()+"', '"+saleTime+"', "+info.getPrice()+", "+info.getCount()+", '"+info.getTile()+"', 3)";
+			sqlList.add(sql);
+		}
+		
+		for(String sql : sqlList) {
+			System.out.println(sql);
+		}
+		FileUtil.deleteSubFiles(new File(unzipPath));
+	}
+	
+	/**
+	 * 85515735_0116_CN.txt.gz
+	 * 计算月份
+	 * @param str
+	 * @return
+	 */
+	private static String getAppStoreFileDate(String str) {
+		str = str.substring(str.indexOf("_")+1, str.lastIndexOf("_"));
+		str = "20"+str.substring(2,4)+str.substring(0,2);
+		return str;
 	}
 
-	public static void main(String[] args) throws Exception {
-		// String xml = "<xml><item bname='aa' bnum='bb' /></xml>";
-		// Document doc = Jsoup.parse(xml);
-		// Elements eles = doc.select("item");
-		// System.out.println(eles.get(0).attr("bname"));
-		// System.out.println(new Date().getTime());
-//		test2();
-		extractFolder("j:\\6620fcac-a1e4-41a2-be1c-eaf5f6fc55ab.zip");
+	private static Map<String, Info> parserTxt(String txtPath) {
+		Map<String, Info> map = new HashMap<String, Info>();
+		File file = new File(txtPath);
+		DecimalFormat decimalFormat=new DecimalFormat(".00");
+		try {
+			FileInputStream stream = new FileInputStream(file);
+			InputStreamReader isr = new InputStreamReader(stream, "UTF8");
+			BufferedReader br = new BufferedReader(isr);
+			String temp = null;
+			String title = "";
+			int lineNumber = 0;
+			while ((temp = br.readLine()) != null) {
+				lineNumber++;
+				if(lineNumber==1) continue;
+				if(temp.split("\t").length<11) break;
+				title = temp.split("\t")[12];
+				if(title==null||"".equals(title)) break;
+				Info info = map.get(title);
+				if (info == null) {
+					info = new Info();
+					info.setIsbn(temp.split("\t")[3]);
+					info.setCount(Integer.parseInt(temp.split("\t")[5]));
+					info.setPrice(decimalFormat.format(Float.parseFloat(temp.split("\t")[7])));
+					info.setTile(title);
+					map.put(title, info);
+				} else {
+					info.setCount(info.getCount()
+							+ Integer.parseInt(temp.split("\t")[5]));
+					info.setPrice(decimalFormat.format(Float.parseFloat(info.getPrice())
+							+ Float.parseFloat(temp.split("\t")[7])));
+					map.put(title, info);
+				}
+			}
+			br.close();
+			isr.close();
+			stream.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return map;
+	}
 
+}
+
+class Info {
+	private String isbn;
+	private int count;
+	private String price;
+	private String tile;
+
+	public String getIsbn() {
+		return isbn;
+	}
+
+	public void setIsbn(String isbn) {
+		this.isbn = isbn;
+	}
+
+	public int getCount() {
+		return count;
+	}
+
+	public void setCount(int count) {
+		this.count = count;
+	}
+
+	public String getPrice() {
+		return price;
+	}
+
+	public void setPrice(String price) {
+		this.price = price;
+	}
+
+	public String getTile() {
+		return tile;
+	}
+
+	public void setTile(String tile) {
+		this.tile = tile;
 	}
 
 }

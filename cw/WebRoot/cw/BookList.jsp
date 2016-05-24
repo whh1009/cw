@@ -69,6 +69,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 						<th class='cen'>EPUB价格</th>
 						<th class='cen'>PDF价格</th>
 						<th class='cen'>广告费</th>
+						<th class='cen'>样章</th>
 						<th class='cen'>转码费</th>
 						<th class='cen'>作者版税</th>
 						<th class='cen'>转码时间</th>
@@ -109,7 +110,8 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 					content+="<td>"+data.list[i].epub_price.toFixed(2)+"</td>";
 					content+="<td>"+data.list[i].pdf_price.toFixed(2)+"</td>";
 					content+="<td>"+data.list[i].ad_price.toFixed(2)+"</td>";
-					content+="<td>"+(data.list[i].epub_price+data.list[i].pdf_price+data.list[i].ad_price).toFixed(2)+"</td>";
+					content+="<td>"+data.list[i].yz_price.toFixed(2)+"</td>";
+					content+="<td>"+(data.list[i].epub_price+data.list[i].pdf_price+data.list[i].ad_price+data.list[i].yz_price).toFixed(2)+"</td>";
 					content+="<td>"+data.list[i].author_royalty.toFixed(2)+"</td>";
 					content+="<td>"+data.list[i].trans_time+"</td>";
 					content+="<td><a href=\"${ctx}/book/bookInfo?id="+data.list[i].id+"\" title='修改'><span class='glyphicon glyphicon-pencil' style='color:blue'></span></a>&nbsp;&nbsp;&nbsp;<a href=\"javascript:updateBook('"+data.list[i].id+"')\" title='删除'><span class='glyphicon glyphicon-trash' style='color:red'></span></a></td>";

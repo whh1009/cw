@@ -71,7 +71,7 @@ public class BookController extends Controller {
 	}
 	
 	public void getExcelList() {
-		renderJson(excelMapService.getExcelList());
+		renderJson(excelMapService.getExcelList(1));
 	}
 	
 	/**
@@ -200,4 +200,5 @@ public class BookController extends Controller {
 			log.error(ex);
 		}
 	}
+	
 }

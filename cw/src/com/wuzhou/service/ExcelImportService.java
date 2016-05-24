@@ -19,7 +19,14 @@ import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
+import com.jfinal.kit.PathKit;
+import com.wuzhou.bean.BookSaleEntity;
+import com.wuzhou.config.Constraint;
 import com.wuzhou.model.BookBaseModel;
 import com.wuzhou.model.BookSaleModel;
 import com.wuzhou.tool.FileUtil;
@@ -94,47 +101,62 @@ public class ExcelImportService {
 		}
 	}
 	
-	/**
-	 * 解析亚马逊美国的excel
-	 * @param filePath
-	 */
-	public int parserAmazonUSExcel(String excelPath) throws Exception{
+	public List<BookSaleEntity> parserAmazonUSExcelToList(String excelPath) throws Exception{
 		Workbook wb = POITools.getWorkbook(excelPath);
 		String name = wb.getSheetName(0);
 		Sheet sheet = POITools.getSheet(0, wb); //第一个sheet
 		Row row = null;
-		List<String> sqlList = new ArrayList<String>();
-		String isbn = "";
-		String bookName = "";
-		String bookAuthor = "";
 		String saleTime = getDate(name.substring(name.lastIndexOf("_")+1));
-		String saleCount = "";
-		String salePrice = "";
-		String platform = "1";
+		List<BookSaleEntity> list = new ArrayList<BookSaleEntity>();
+		int count = 0;
 		for(int rowNumber = 1; rowNumber<POITools.getRowCount(sheet);rowNumber++) { //第一行标题行，从第二行开始
 			row = POITools.getRow(sheet, rowNumber);
 			if("".equals(POITools.getCellValue(row.getCell(0)))) break; //如果读到空行就返回
-			isbn = POITools.getCellValue(row.getCell(3));
-			bookName = POITools.getCellValue(row.getCell(5)).replace("'", "''");
-			bookAuthor = POITools.getCellValue(row.getCell(6)).replace("'", "''");
-			saleCount = "".equals(POITools.getCellValue(row.getCell(12)))?"0.0":POITools.getCellValue(row.getCell(12));
-			salePrice = "".equals(POITools.getCellValue(row.getCell(21)))?"0.0":POITools.getCellValue(row.getCell(21));
-			sqlList.add("insert ignore into book_sale (sale_time, book_isbn, book_name, book_author, sale_total_count, sale_total_price, platform) values "
-					+ "('"+saleTime+"', '"+isbn+"', '"+bookName+"', '"+bookAuthor+"', "+saleCount+", "+salePrice+", '"+platform+"')");
+			count++;
+			BookSaleEntity aus = new BookSaleEntity();
+			aus.setId(count);
+			aus.setIsbn(POITools.getCellValue(row.getCell(3)));
+			aus.setBookName(POITools.getCellValue(row.getCell(5)));
+			aus.setBookAuthor(POITools.getCellValue(row.getCell(6)));
+			aus.setSaleCount("".equals(POITools.getCellValue(row.getCell(12)))?"0.0":POITools.getCellValue(row.getCell(12)));
+			aus.setSalePrice("".equals(POITools.getCellValue(row.getCell(19)))?"0.0":POITools.getCellValue(row.getCell(19)));
+			aus.setListPrice("".equals(POITools.getCellValue(row.getCell(14)))?"0.0":POITools.getCellValue(row.getCell(14)));
+			aus.setPlatform("亚马逊美国");
+			aus.setSaleTime(saleTime);
+			list.add(aus);
 		}
-		for(String str : sqlList) {
-			log.warn(str);
-		}
-		return BookSaleModel.dao.batchImport(sqlList).length;
+		return list;
 	}
 	
-	/**
-	 * 
-	 * @param zipPath
-	 * @param unzipPath
-	 * @throws Exception
-	 */
-	public int parserAppStoreZip(String zipPath, String unzipPath) throws Exception {
+	public List<BookSaleEntity> parserAmazonCNExcelToList(String excelPath) throws Exception{
+		Workbook wb = POITools.getWorkbook(excelPath);
+		String name = wb.getSheetName(0);
+		Sheet sheet = POITools.getSheet(0, wb); //第一个sheet
+		Row row = null;
+		String saleTime = getDate(name.substring(name.lastIndexOf("_")+1));
+		List<BookSaleEntity> list = new ArrayList<BookSaleEntity>();
+		int count = 0;
+		for(int rowNumber = 1; rowNumber<POITools.getRowCount(sheet);rowNumber++) { //第一行标题行，从第二行开始
+			row = POITools.getRow(sheet, rowNumber);
+			if("".equals(POITools.getCellValue(row.getCell(0)))) break; //如果读到空行就返回
+			count++;
+			BookSaleEntity acn = new BookSaleEntity();
+			acn.setId(count);
+			acn.setIsbn(POITools.getCellValue(row.getCell(3)));
+			acn.setBookName(POITools.getCellValue(row.getCell(5)));
+			acn.setBookAuthor(POITools.getCellValue(row.getCell(6)));
+			acn.setSaleCount("".equals(POITools.getCellValue(row.getCell(12)))?"0.0":POITools.getCellValue(row.getCell(12)));
+			acn.setSalePrice("".equals(POITools.getCellValue(row.getCell(21)))?"0.0":POITools.getCellValue(row.getCell(21)));
+			acn.setListPrice("".equals(POITools.getCellValue(row.getCell(14)))?"0.0":POITools.getCellValue(row.getCell(14)));
+			acn.setPlatform("亚马逊中国");
+			acn.setSaleTime(saleTime);
+			list.add(acn);
+		}
+		return list;
+	}
+	
+	public List<BookSaleEntity> parserAppStoreZipToList(String zipPath) throws Exception {
+		String unzipPath = PathKit.getWebRootPath()+File.separator+Constraint.UNZIP_FOLD;
 		ZipUtils.extractFolder(zipPath, unzipPath);
 		String txtPath = "";
 		for (File file : new File(unzipPath).listFiles()) {
@@ -145,27 +167,124 @@ public class ExcelImportService {
 			}
 		}
 		if ("".equals(txtPath))
-			return 0;
+			return null;
 		Map<String, Info> map = parserTxt(txtPath);
 		if (map == null || map.isEmpty())
-			return 0;
+			return null;
 		String saleTime = getAppStoreFileDate(txtPath);
-		List<String> sqlList = new ArrayList<String>();
+		List<BookSaleEntity> list = new ArrayList<BookSaleEntity>();
 		Set<String> set = map.keySet();
+		int id=0;
 		for (String s : set) {
-			String sql = "";
+			id++;
+			BookSaleEntity bse = new BookSaleEntity();
 			Info info = map.get(s);
-			sql = "insert ignore into book_sale (book_isbn, sale_time, sale_total_price, sale_total_count, book_name, platform) "
-					+ "values ('"+info.getIsbn()+"', '"+saleTime+"', "+info.getPrice()+", "+info.getCount()+", '"+info.getTile()+"', 3)";
-			sqlList.add(sql);
-		}
-		
-		for(String sql : sqlList) {
-			System.out.println(sql);
+			bse.setId(id);
+			bse.setIsbn(info.getIsbn());
+			bse.setBookName(info.getTile());
+			bse.setBookAuthor("");
+			bse.setSaleCount(info.getCount()+"");
+			bse.setSalePrice(info.getPrice());
+			bse.setPlatform("App Store");
+			bse.setSaleTime(saleTime);
+			list.add(bse);
 		}
 		FileUtil.deleteSubFiles(new File(unzipPath));
-		return BookSaleModel.dao.batchImport(sqlList).length;
+		return list;
 	}
+	
+	public int[] saveExcel(String xml) {
+		try {
+			Document doc = Jsoup.parse(xml);
+			String excelName = doc.attr("name");
+			Elements eles = doc.select("item");
+			List<String> sqlList = new ArrayList<String>();
+			for(Element ele : eles) {
+				sqlList.add("insert into book_sale (server_excel_name, sale_time, book_isbn, book_name, book_author, sale_total_count, sale_total_price, platform) values "
+						+ "('"+excelName+"', '"+ele.attr("saleTime")+"', '"+ele.attr("isbn")+"', '"+ele.attr("bookName")+"', '"+ele.attr("bookAuthor")+"', "+ele.attr("saleCount")+", "+ele.attr("salePrice")+", '"+ele.attr("platform")+"')");
+			}
+			for(String str : sqlList) {
+				log.warn(str);
+			}
+			return BookSaleModel.dao.batchImport(sqlList);
+		} catch(Exception ex) {
+			ex.printStackTrace();
+			return null;
+		}
+	}
+	
+	/**
+	 * 解析亚马逊美国的excel
+	 * @param filePath
+	 */
+//	public int parserAmazonUSExcel(String excelPath) throws Exception{
+//		Workbook wb = POITools.getWorkbook(excelPath);
+//		String name = wb.getSheetName(0);
+//		Sheet sheet = POITools.getSheet(0, wb); //第一个sheet
+//		Row row = null;
+//		List<String> sqlList = new ArrayList<String>();
+//		String isbn = "";
+//		String bookName = "";
+//		String bookAuthor = "";
+//		String saleTime = getDate(name.substring(name.lastIndexOf("_")+1));
+//		String saleCount = "";
+//		String salePrice = "";
+//		String platform = "1";
+//		for(int rowNumber = 1; rowNumber<POITools.getRowCount(sheet);rowNumber++) { //第一行标题行，从第二行开始
+//			row = POITools.getRow(sheet, rowNumber);
+//			if("".equals(POITools.getCellValue(row.getCell(0)))) break; //如果读到空行就返回
+//			isbn = POITools.getCellValue(row.getCell(3));
+//			bookName = POITools.getCellValue(row.getCell(5)).replace("'", "''");
+//			bookAuthor = POITools.getCellValue(row.getCell(6)).replace("'", "''");
+//			saleCount = "".equals(POITools.getCellValue(row.getCell(12)))?"0.0":POITools.getCellValue(row.getCell(12));
+//			salePrice = "".equals(POITools.getCellValue(row.getCell(21)))?"0.0":POITools.getCellValue(row.getCell(21));
+//			sqlList.add("insert ignore into book_sale (sale_time, book_isbn, book_name, book_author, sale_total_count, sale_total_price, platform) values "
+//					+ "('"+saleTime+"', '"+isbn+"', '"+bookName+"', '"+bookAuthor+"', "+saleCount+", "+salePrice+", '"+platform+"')");
+//		}
+//		for(String str : sqlList) {
+//			log.warn(str);
+//		}
+//		return BookSaleModel.dao.batchImport(sqlList).length;
+//	}
+	
+	/**
+	 * 
+	 * @param zipPath
+	 * @param unzipPath
+	 * @throws Exception
+	 */
+//	public int parserAppStoreZip(String zipPath, String unzipPath) throws Exception {
+//		ZipUtils.extractFolder(zipPath, unzipPath);
+//		String txtPath = "";
+//		for (File file : new File(unzipPath).listFiles()) {
+//			String filePath = file.getAbsolutePath();
+//			if (filePath.endsWith(".txt")) {
+//				txtPath = filePath;
+//				break;
+//			}
+//		}
+//		if ("".equals(txtPath))
+//			return 0;
+//		Map<String, Info> map = parserTxt(txtPath);
+//		if (map == null || map.isEmpty())
+//			return 0;
+//		String saleTime = getAppStoreFileDate(txtPath);
+//		List<String> sqlList = new ArrayList<String>();
+//		Set<String> set = map.keySet();
+//		for (String s : set) {
+//			String sql = "";
+//			Info info = map.get(s);
+//			sql = "insert ignore into book_sale (book_isbn, sale_time, sale_total_price, sale_total_count, book_name, platform) "
+//					+ "values ('"+info.getIsbn()+"', '"+saleTime+"', "+info.getPrice()+", "+info.getCount()+", '"+info.getTile()+"', 3)";
+//			sqlList.add(sql);
+//		}
+//		
+//		for(String sql : sqlList) {
+//			System.out.println(sql);
+//		}
+//		FileUtil.deleteSubFiles(new File(unzipPath));
+//		return BookSaleModel.dao.batchImport(sqlList).length;
+//	}
 	
 	/**
 	 * 解析appstore txt的正文内容
@@ -198,10 +317,8 @@ public class ExcelImportService {
 					info.setTile(title);
 					map.put(title, info);
 				} else {
-					info.setCount(info.getCount()
-							+ Integer.parseInt(temp.split("\t")[5]));
-					info.setPrice(decimalFormat.format(Float.parseFloat(info.getPrice())
-							+ Float.parseFloat(temp.split("\t")[7])));
+					info.setCount(info.getCount() + Integer.parseInt(temp.split("\t")[5]));
+					info.setPrice(decimalFormat.format(Float.parseFloat(info.getPrice()) + Float.parseFloat(temp.split("\t")[7])));
 					map.put(title, info);
 				}
 			}
@@ -253,7 +370,7 @@ class Info {
 	private int count;
 	private String price;
 	private String tile;
-
+	
 	public String getIsbn() {
 		return isbn;
 	}
