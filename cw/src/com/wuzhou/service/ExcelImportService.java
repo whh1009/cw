@@ -201,7 +201,7 @@ public class ExcelImportService {
 			List<String> sqlList = new ArrayList<String>();
 			for(Element ele : eles) {
 				sqlList.add("insert into book_sale (server_excel_name, sale_time, book_isbn, book_name, book_author, sale_total_count, sale_total_price, platform) values "
-						+ "('"+excelName+"', '"+ele.attr("saleTime")+"', '"+ele.attr("isbn")+"', '"+ele.attr("bookName")+"', '"+ele.attr("bookAuthor")+"', "+ele.attr("saleCount")+", "+ele.attr("salePrice")+", '"+ele.attr("platform")+"')");
+						+ "('"+excelName+"', '"+ele.attr("saleTime")+"', '"+ele.attr("isbn")+"', '"+ele.attr("bookName")+"', '"+ele.attr("bookAuthor")+"', "+ele.attr("saleCount")+", "+ele.attr("salePrice")+", '"+getPlatform(ele.attr("platform"))+"')");
 			}
 			for(String str : sqlList) {
 				log.warn(str);
@@ -213,6 +213,16 @@ public class ExcelImportService {
 		}
 	}
 	
+	
+	private String getPlatform(String platform) {
+		switch(platform){
+		case "亚马逊美国": return "2";
+		case "亚马逊中国": return "3";
+		case "App Store": return "4";
+		case "Over Drive": return "5";
+		default:return "-1";
+		}
+	}
 	/**
 	 * 解析亚马逊美国的excel
 	 * @param filePath

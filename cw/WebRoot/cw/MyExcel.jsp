@@ -40,7 +40,7 @@ $(function() {
 		language: { //初始化语言
 			url:"${ctx}/datatables/lanauge/lanauge.json"
 		},
-		lengthMenu : [20, 40, 60, 100],
+		lengthMenu : [20, 40, 60, 100, 150, 200, 300, 400, 1000, 5000],
 	    data:data,
 	    columns:[{data:""}, {data:"saleTime"}, {data:"isbn"}, {data:"bookName"}, {data:"bookAuthor"}, {data:"saleCount"}, {data:"salePrice"}, {data:"platform"}],
 		columnDefs: [ {
