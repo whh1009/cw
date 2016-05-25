@@ -18,7 +18,7 @@ table{
 <body>
 
 	<jsp:include page="_header.jsp"></jsp:include>
-	<div class="container">
+	<div class="container-fluid">
 		<div class="row">
 			<table id="table" class="table order-column">
 			<thead>

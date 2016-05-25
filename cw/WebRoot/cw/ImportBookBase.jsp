@@ -20,7 +20,7 @@
 
 <body>
 	<jsp:include page="_header.jsp"></jsp:include>
-	<div class="container">
+	<div class="container-fluid">
 		<div class="row">
 			<blockquote>
 				<h3>提示：</h3>

@@ -33,9 +33,9 @@ table {
 
 <body>
 	<jsp:include page="_header.jsp"></jsp:include>
-	<div class="container">
+	<div class="container-fluid">
 		<div class="row">
-			<form class="form-inline">
+			<div class="form-inline">
 				<div class="form-group">
 					<label>平台：</label>
 					<select class="form-control" id="platformSel">
@@ -54,9 +54,11 @@ table {
 				<div class="form-group">
 					<button class="btn btn-info" onclick="importData()"><i class="glyphicon glyphicon-import"></i>&nbsp;导出</button>
 				</div>
-			</form>
+			</div>
 		</div>
-		<div id="priceCountDiv"></div>
+		<div class="row">
+			<div id="priceCountDiv"></div>
+		</div>
 		<div class="row">
 			<table class="table table-hover" id="tableContent">
 				<thead></thead>
@@ -82,13 +84,13 @@ table {
 				if(data) {
 					for(var i=0;i<data.length;i++){
 						if(data[i].platform==1) {
-							platformSel+="<option value='1'>亚马逊美国</option>";
+							platformSel+="<option value='2'>亚马逊美国</option>";
 						} else if(data[i].platform==2) {
-							platformSel+="<option value='2'>亚马逊中国</option>";
+							platformSel+="<option value='3'>亚马逊中国</option>";
 						} else if(data[i].platform==3){
-							platformSel+="<option value='3'>App Store</option>";
+							platformSel+="<option value='4'>App Store</option>";
 						} else if(data[i].platform==4) {
-							platformSel+="<option value='4'>That's Books</option>";
+							platformSel+="<option value='5'>Over Drive</option>";
 						}
 					}
 				}
@@ -169,6 +171,8 @@ table {
 									content+="<td>亚马逊中国</td>";
 								} else if(data.list[i].platform==4) {
 									content+="<td>App Store</td>";
+								} else if(data.list[i].platform=5) {
+									content+="<td>Over Drive</td>";
 								}
 								content+="</tr>";
 							}

@@ -26,7 +26,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
   
   <body>
   	<jsp:include page="_header.jsp"></jsp:include>
-    <div class="container">
+    <div class="container-fluid">
 		<div class="row">
 			<div class="col-sm-8">
 				<select id="excelSel" class="form-control">
@@ -58,7 +58,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     		</div>
     	</div>
 		<div class="row">
-			<table class="table table-hover table-bordered" style="text-align:center">
+			<table class="table table-hover" style="text-align:center">
 				<thead>
 					<tr>
 						<th class='cen'>来源</th>
@@ -97,6 +97,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     	mySearchSql = "1=1";
     	getSearchCondition();
 		_page = page;
+		$("#page").html("");
 		$.post("${ctx}/book/getBookList", {mySearchSql:mySearchSql, page:_page}, function(data) {
 			var content="";
 			if(data&&data.list.length) {

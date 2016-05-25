@@ -25,7 +25,7 @@
 
 <body>
 	<jsp:include page="_header.jsp"></jsp:include>
-	<div class="container">
+	<div class="container-fluid">
 		<div class="row">
 			<form method="post" action="${ctx }/import/test" enctype="multipart/form-data" onsubmit="return checkFile()">
 				<input id="file" name="file" type="file" class="file"> <br>

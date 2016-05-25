@@ -135,6 +135,7 @@ $(function() {
 					},
 					error:function() {
 						$("#table").hideLoading();
+						console.log("error");
 					}
 				});
 			}
@@ -156,7 +157,7 @@ function initTable() {
 	<div class="container-fluid">
 		<button id="saveAll" class="btn btn-success" data-loading-text="请稍等..."  autocomplete="off">全部保存</button>
 		<button id="saveSelected" class="btn btn-info" data-loading-text="请稍等..."  autocomplete="off">保存选择的行</button>
-		<table id="table" class="table order-column">
+		<table id="table" class="table order-column" style="width:100%">
 			<thead>
 				<tr>
 					<th class="dt-body-center"><input name="select_all" value="1" id="example-select-all" type="checkbox" /> </th>

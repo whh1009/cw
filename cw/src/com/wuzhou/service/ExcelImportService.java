@@ -193,26 +193,36 @@ public class ExcelImportService {
 		return list;
 	}
 	
-	public int[] saveExcel(String xml) {
+	public String saveExcel(String xml) {
 		try {
 			Document doc = Jsoup.parse(xml);
-			String excelName = doc.attr("name");
+			String excelName = doc.select("root").first().attr("name");
+//			String excelName = doc.attr("name");
 			Elements eles = doc.select("item");
 			List<String> sqlList = new ArrayList<String>();
 			for(Element ele : eles) {
 				sqlList.add("insert into book_sale (server_excel_name, sale_time, book_isbn, book_name, book_author, sale_total_count, sale_total_price, platform) values "
 						+ "('"+excelName+"', '"+ele.attr("saleTime")+"', '"+ele.attr("isbn")+"', '"+ele.attr("bookName")+"', '"+ele.attr("bookAuthor")+"', "+ele.attr("saleCount")+", "+ele.attr("salePrice")+", '"+getPlatform(ele.attr("platform"))+"')");
 			}
-			for(String str : sqlList) {
-				log.warn(str);
-			}
-			return BookSaleModel.dao.batchImport(sqlList);
+			int [] out = BookSaleModel.dao.batchImport(sqlList);
+			return intArrayToString(out);
 		} catch(Exception ex) {
 			ex.printStackTrace();
+			log.error(ex);
 			return null;
 		}
 	}
 	
+	private String intArrayToString(int[] out) {
+		if(out==null||out.length==0) return "";
+		else {
+			String str = "";
+			for(int i : out) {
+				str+=i+",";
+			}
+			return StringUtil.ignoreComma(str);
+		}
+	}
 	
 	private String getPlatform(String platform) {
 		switch(platform){
