@@ -23,9 +23,11 @@ table{
 			<table id="table" class="table order-column">
 			<thead>
 				<tr>
-					<th class="">excel文件名</th>
+					<th>上传平台</th>
+					<th>原始文件名</th>
+					<th>服务器名称</th>
 					<th>时间</th>
-					<th>操作</th>
+					<th data-toggle='tooltip' data-placement='left' title='注意：点击删除时，会删除该excel中的全部数据'>操作</th>
 				</tr>
 			</thead>
 			<tbody id="tbody"></tbody>
@@ -34,6 +36,10 @@ table{
 	</div>
 	<script type="text/javascript">
 		$(function() {
+			//初始化tooltip
+			$('[data-toggle="tooltip"]').tooltip();
+			
+			
 			$.ajax({
 				url:"${ctx}/import/getAllExcelList",
 				method:"POST",
@@ -44,7 +50,27 @@ table{
 					$("#tbody").hideLoading();
 					var html = "";
 					for(var i=0;i<data.length;i++){
-						html+="<tr><td>"+data[i].upload_excel_name+"</td><td>"+data[i].add_time+"</td><td><a href='${ctx}/uploadFiles/"+data[i].server_excel_name+"' title='下载'><i class='glyphicon glyphicon-download-alt'></i></a>&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"javascript:remove('"+data[i].server_excel_name+"')\" title='删除'><i class='glyphicon glyphicon-trash'></i></a></td></tr>";
+						html+="<tr>";
+						if(data[i].type==1) {
+							html+="<td>基本表</td>";
+						} else if(data[i].type==2) {
+							html+="<td>亚马逊美国</td>";
+						} else if(data[i].type==3) {
+							html+="<td>亚马逊中国</td>";
+						} else if(data[i].type==4) {
+							html+="<td>App Store</td>";
+						} else if(data[i].type==5) {
+							html+="<td>Over Drive</td>";
+						} else if(data[i].type==6){
+							html+="<td>That's Books</td>";
+						} else {
+							html+="<td>&nbsp;</td>";
+						}
+						html+="<td>"+data[i].upload_excel_name+"</td>";
+						html+="<td>"+data[i].server_excel_name+"</td>";
+						html+="<td>"+data[i].add_time+"</td>";
+						html+="<td><a href='${ctx}/uploadFiles/"+data[i].server_excel_name+"' title='下载'><i class='glyphicon glyphicon-download-alt'></i></a>&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"javascript:remove('"+data[i].server_excel_name+"')\" data-toggle='tooltip' data-placement='left' title='删除，会删除该excel中的全部数据'><i class='glyphicon glyphicon-trash'></i></a></td>";
+						html+="</tr>";
 					}
 					$("#tbody").html(html);
 				},
@@ -53,6 +79,7 @@ table{
 					$("#tbody").html("<tr><td colspan='2'><font color='red'>暂无数据</font></td></tr>");
 				}
 			});
+			
 		});
 		
 		//删除excel

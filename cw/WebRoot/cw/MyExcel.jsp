@@ -84,25 +84,15 @@ $(function() {
 				alert("请至少选择一行");
 			} else {
 				$("#table").showLoading();
+				/*
 				var xml="<root name='${name}'>";
 				for(var i=0;i<table.rows(".selected").data().length;i++) {
 					var data = table.rows(".selected").data()[i];
-					xml+="<item isbn='"+data.isbn+"' bookName='"+data.bookName+"' bookAuthor='"+data.bookAuthor+"' platform='"+data.platform+"' saleCount='"+data.saleCount+"' salePrice='"+data.salePrice+"' saleTime='"+data.saleTime+"' />";
+					xml+="<item isbn='"+data.isbn+"' bookName='"+data.bookName.replace(/'/g, "＇")+"' bookAuthor='"+data.bookAuthor.replace(/'/g, "＇")+"' platform='"+data.platform+"' saleCount='"+data.saleCount+"' salePrice='"+data.salePrice+"' saleTime='"+data.saleTime+"' />";
 				}
 				xml+="</root>";
-				$.ajax({
-					url:"${ctx }/import/saveExcel",
-					method:"post",
-					dataType:"json",
-					data:{xml:xml},				
-					success:function(data) {
-						$("#table").hideLoading();
-						console.log(data);
-					},
-					error:function() {
-						$("#table").hideLoading();
-					}
-				});
+				*/
+				postXml(table);
 			}
 		}
 		$btn.button("reset");
@@ -118,31 +108,44 @@ $(function() {
 				alert("请至少选择一行");
 			} else {
 				$("#table").showLoading();
-				var xml="<root>";
-				for(var i=0;i<table.rows(".selected").data().length;i++) {
-					var data = table.rows(".selected").data()[i];
-					xml+="<item isbn='"+data.isbn+"' bookName='"+data.bookName+"' bookAuthor='"+data.bookAuthor+"' platform='"+data.platform+"' saleCount='"+data.saleCount+"' salePrice='"+data.salePrice+"' saleTime='"+data.saleTime+"' />";
-				}
-				xml+="</root>";
-				$.ajax({
-					url:"${ctx }/import/saveExcel",
-					method:"post",
-					dataType:"json",
-					data:{xml:xml},				
-					success:function(data) {
-						$("#table").hideLoading();
-						console.log(data);
-					},
-					error:function() {
-						$("#table").hideLoading();
-						console.log("error");
-					}
-				});
+				
+				postXml(table);
 			}
 		}
 		$btn.button("reset");
 	});
 });
+
+function postXml(table) {
+	var xml="<root name='${name}'>";
+	for(var i=0;i<table.rows(".selected").data().length;i++) {
+		var data = table.rows(".selected").data()[i];
+		xml+="<item isbn='"+data.isbn+"' bookName='"+data.bookName.replace(/'/g, "＇")+"' bookAuthor='"+data.bookAuthor.replace(/'/g, "＇")+"' platform='"+data.platform+"' saleCount='"+data.saleCount+"' salePrice='"+data.salePrice+"' saleTime='"+data.saleTime+"' />";
+	}
+	xml+="</root>";
+	$.ajax({
+		url:"${ctx }/import/saveExcel",
+		method:"post",
+		dataType:"text",
+		data:{xml:xml},
+		success:function(data) {
+			$("#table").hideLoading();
+			if(data=="0"){
+				console.log(xml);
+				alert("保存失败：未获取到excle数据");
+			} else if(data=="-1"){
+				alert("数据异常，不符合条件，请联系管理员");
+			} else {
+				console.log(data);
+				alert("共保存了 "+data.split(",").length + " 条");
+			}
+		},
+		error:function() {
+			$("#table").hideLoading();
+			console.log("error");
+		}
+	});
+}
 
 function initTable() {
 	
@@ -164,7 +167,7 @@ function initTable() {
 					<th>时间</th>
 					<th>ISBN</th>
 					<th>书名</th>
-					<th>责编</th>
+					<th>作者</th>
 					<th>数量</th>
 					<th>总价</th>
 					<th>平台</th>

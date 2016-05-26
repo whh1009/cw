@@ -2,105 +2,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta charset="utf-8">
 <link rel="shortcut icon" href="${ctx }/favicon.ico" />
+
 <link href="${ctx }/css/bootstrap.min.css" rel="stylesheet" />
 <script src="${ctx }/js/bootstrap.min.js" type="text/javascript"></script>
+<link href="${ctx }/css/header.css" rel="stylesheet" />
 <style>
-.row{
-	margin-top:1em;
-}
-.navbar-default {
-  background-color: #b71e0e;
-  border-color: #c0392b;
-}
-.navbar-default .navbar-brand {
-  color: #ecf0f1;
-}
-.navbar-default .navbar-brand:hover,
-.navbar-default .navbar-brand:focus {
-  color: #e6b81e;
-}
-.navbar-default .navbar-text {
-  color: #ecf0f1;
-}
-.navbar-default .navbar-nav > li > a {
-  color: #ecf0f1;
-}
-.navbar-default .navbar-nav > li > a:hover,
-.navbar-default .navbar-nav > li > a:focus {
-  color: #e6b81e;
-}
-.navbar-default .navbar-nav > li > .dropdown-menu {
-  background-color: #b71e0e;
-}
-.navbar-default .navbar-nav > li > .dropdown-menu > li > a {
-  color: #ecf0f1;
-}
-.navbar-default .navbar-nav > li > .dropdown-menu > li > a:hover,
-.navbar-default .navbar-nav > li > .dropdown-menu > li > a:focus {
-  color: #e6b81e;
-  background-color: #c0392b;
-}
-.navbar-default .navbar-nav > li > .dropdown-menu > li > .divider {
-  background-color: #c0392b;
-}
-.navbar-default .navbar-nav .open .dropdown-menu > .active > a,
-.navbar-default .navbar-nav .open .dropdown-menu > .active > a:hover,
-.navbar-default .navbar-nav .open .dropdown-menu > .active > a:focus {
-  color: #e6b81e;
-  background-color: #c0392b;
-}
-.navbar-default .navbar-nav > .active > a,
-.navbar-default .navbar-nav > .active > a:hover,
-.navbar-default .navbar-nav > .active > a:focus {
-  color: #e6b81e;
-  background-color: #c0392b;
-}
-.navbar-default .navbar-nav > .open > a,
-.navbar-default .navbar-nav > .open > a:hover,
-.navbar-default .navbar-nav > .open > a:focus {
-  color: #e6b81e;
-  background-color: #c0392b;
-}
-.navbar-default .navbar-toggle {
-  border-color: #c0392b;
-}
-.navbar-default .navbar-toggle:hover,
-.navbar-default .navbar-toggle:focus {
-  background-color: #c0392b;
-}
-.navbar-default .navbar-toggle .icon-bar {
-  background-color: #ecf0f1;
-}
-.navbar-default .navbar-collapse,
-.navbar-default .navbar-form {
-  border-color: #ecf0f1;
-}
-.navbar-default .navbar-link {
-  color: #ecf0f1;
-}
-.navbar-default .navbar-link:hover {
-  color: #e6b81e;
-}
-
-@media (max-width: 767px) {
-  .navbar-default .navbar-nav .open .dropdown-menu > li > a {
-    color: #ecf0f1;
-  }
-  .navbar-default .navbar-nav .open .dropdown-menu > li > a:hover,
-  .navbar-default .navbar-nav .open .dropdown-menu > li > a:focus {
-    color: #e6b81e;
-  }
-  .navbar-default .navbar-nav .open .dropdown-menu > .active > a,
-  .navbar-default .navbar-nav .open .dropdown-menu > .active > a:hover,
-  .navbar-default .navbar-nav .open .dropdown-menu > .active > a:focus {
-    color: #e6b81e;
-    background-color: #c0392b;
-  }
-}
-
 .container-fluid {
 	padding-left: 55px;
 	padding-right: 55px;
+}
+.glyphicon-trash, .fontRed{
+	color:red;
 }
 
 </style>
@@ -146,7 +58,7 @@ function checkFile() {
 							<li><a href="${ctx }/import/importAmazonCNBookPage"><i class='glyphicon glyphicon-import'></i>&nbsp;亚马逊（中国）</a></li>
 							<li><a href="${ctx }/import/importAmazonUSBookPage"><i class='glyphicon glyphicon-import'></i>&nbsp;亚马逊（美国）</a></li>
 							<li><a href="${ctx }/import/importAppStorePage"><i class='glyphicon glyphicon-import'></i>&nbsp;AppStore</a></li>
-							<li><a href="${ctx }/import/importOverDrivePage"><i class='glyphicon glyphicon-import'></i>&nbsp;OverDrive</a></li>
+							<!-- <li><a href="${ctx }/import/importOverDrivePage"><i class='glyphicon glyphicon-import'></i>&nbsp;OverDrive</a></li> -->
 						</ul>
 					</li>
 					<li><a href="${ctx }/book/bookList"><i class='glyphicon glyphicon-tasks'></i>&nbsp;图书列表</a></li>
@@ -162,7 +74,7 @@ function checkFile() {
 				</form>
 				 -->
 				<ul class="nav navbar-nav navbar-right">
-					<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">欢迎 ${USER_SESSION.nick_name } <span class="caret"></span></a>
+					<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">欢迎您 <span class="caret"></span></a>
 						<ul class="dropdown-menu">
 							<li><a href="${ctx }/user/signout">退出</a></li>
 						</ul></li>

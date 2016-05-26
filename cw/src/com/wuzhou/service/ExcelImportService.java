@@ -202,7 +202,7 @@ public class ExcelImportService {
 			List<String> sqlList = new ArrayList<String>();
 			for(Element ele : eles) {
 				sqlList.add("insert into book_sale (server_excel_name, sale_time, book_isbn, book_name, book_author, sale_total_count, sale_total_price, platform) values "
-						+ "('"+excelName+"', '"+ele.attr("saleTime")+"', '"+ele.attr("isbn")+"', '"+ele.attr("bookName")+"', '"+ele.attr("bookAuthor")+"', "+ele.attr("saleCount")+", "+ele.attr("salePrice")+", '"+getPlatform(ele.attr("platform"))+"')");
+						+ "('"+excelName+"', '"+ele.attr("saleTime")+"', '"+ele.attr("isbn")+"', '"+StringUtil.formatMySqlChar(ele.attr("bookName"))+"', '"+StringUtil.formatMySqlChar(ele.attr("bookAuthor"))+"', "+ele.attr("saleCount")+", "+ele.attr("salePrice")+", '"+getPlatform(ele.attr("platform"))+"')");
 			}
 			int [] out = BookSaleModel.dao.batchImport(sqlList);
 			return intArrayToString(out);
@@ -230,6 +230,7 @@ public class ExcelImportService {
 		case "亚马逊中国": return "3";
 		case "App Store": return "4";
 		case "Over Drive": return "5";
+		case "That's Books": return "6";
 		default:return "-1";
 		}
 	}
@@ -382,6 +383,10 @@ public class ExcelImportService {
 		str = str.substring(str.indexOf("_")+1, str.lastIndexOf("_"));
 		str = "20"+str.substring(2,4)+str.substring(0,2);
 		return str;
+	}
+	
+	public void deleteByServerName(String serverName) {
+		BookSaleModel.dao.deleteByServerName(serverName);
 	}
 	
 }

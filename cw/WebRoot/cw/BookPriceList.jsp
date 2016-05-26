@@ -82,14 +82,17 @@ table {
 			$.post("${ctx}/book/getDistinctPlatform", {}, function(data) {
 				var platformSel = "<option value='0'>请选择平台</option>";
 				if(data) {
+					console.log(data);
 					for(var i=0;i<data.length;i++){
 						if(data[i].platform==1) {
-							platformSel+="<option value='2'>亚马逊美国</option>";
+							platformSel+="<option value='1'>基本表</option>";
 						} else if(data[i].platform==2) {
+							platformSel+="<option value='2'>亚马逊美国</option>";
+						} else if(data[i].platform==3) {
 							platformSel+="<option value='3'>亚马逊中国</option>";
-						} else if(data[i].platform==3){
+						} else if(data[i].platform==4){
 							platformSel+="<option value='4'>App Store</option>";
-						} else if(data[i].platform==4) {
+						} else if(data[i].platform==5) {
 							platformSel+="<option value='5'>Over Drive</option>";
 						}
 					}
@@ -126,7 +129,7 @@ table {
 		
 		//初始化表格标题
 		function initTableHeader() {
-			var header = "<tr><th>ISBN</th><th>书名</th><th>责编</th><th>时间</th><th>总金额</th><th>总量</th><th>平台</th></tr>";
+			var header = "<tr><th>ISBN</th><th>书名</th><th>作者</th><th>时间</th><th>总金额</th><th>总量</th><th>平台</th></tr>";
 			$("#tableContent thead").html(header);
 		}
 		

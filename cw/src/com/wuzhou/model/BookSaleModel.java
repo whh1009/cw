@@ -41,4 +41,8 @@ public class BookSaleModel extends Model<BookSaleModel> {
 	public Record getBookPriceCount(String mySearchSql) {
 		return Db.findFirst("select truncate(sum(sale_total_price), 2) as price, sum(sale_total_count) as count from book_sale where 1=1 ");
 	}
+	
+	public void deleteByServerName(String serverName) {
+		Db.update("delete from book_sale where server_excel_name = ?", serverName);
+	}
 }

@@ -19,33 +19,40 @@
 </head>
 
 <body>
-	<jsp:include page="_header.jsp"></jsp:include>
 	<div class="container-fluid">
 		<div class="row">
 			<blockquote>
 				<h3>提示：</h3>
-				<p><strong>请注意模版导入名称规范一定是：</strong></p>
+				<p>
+				</p>
 			</blockquote>
 		</div>
 		<div class="row">
-			<div class="form-group">
+			<form class="form-group" action="${ctx }/import/uploadExcel" method="post" enctype="multipart/form-data" onsubmit="return checkFile()">
 	            <input id="file" name="file" type="file" class="file" data-preview-file-type="text">
-	        </div>
+	            <input type="hidden" name="t" value="5" />
+	            <br />
+	            <input type="submit" class="btn btn-success" value="上传" />
+	            <input type="reset" class="btn" value="取消" />
+	        </form>
         </div>
 	</div>
 	
 	<script>
-	
-	$("#file").fileinput({
-        language: "zh",
-        uploadUrl: "${ctx }/import/uploadAppStoreExcel",
-        maxFilesNum: 1,
-        allowedFileExtensions : ["zip"],
-    });
+	/*
+	$(function() {
+		$("#file").fileinput({
+	        language: "zh",
+	        maxFilesNum: 1,
+	        allowedFileExtensions : ["xlsx","xls"],
+	    });
+	});
+	*/
+	/*
 	$(function() {
 		$("#file").on("fileuploaded", function(event, data, previewId, index) {
 			$.ajax({
-				url:"${ctx }/import/saveAppStoreBook",
+				url:"${ctx }/import/saveAmazonUSBookExcel",
 				type:"post",
 				dataType:"json",
 				beforeSend: function () {
@@ -66,7 +73,7 @@
 			});
 		});
 	});
-	
+	*/
 	</script>
 </body>
 </html>

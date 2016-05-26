@@ -98,4 +98,13 @@ public class StringUtil {
 		if(i==0) return false;
 		else return true;
 	}
+	
+	/**
+	 * mysql特殊字符过滤
+	 * @param str
+	 * @return
+	 */
+	public static String formatMySqlChar(String str) {
+		return str.replace("'", "＇");
+	}
 }

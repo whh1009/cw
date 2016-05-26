@@ -23,8 +23,13 @@
 	<div class="container-fluid">
 		<div class="row">
 			<blockquote>
-				<h3>提示：</h3>
-				<p><strong>请注意亚马逊美国模版导入名称规范一定是：CNICN_DigitalEBooksPaymentReport_20130131-20130228</strong><small><a href="${ctx }/temp/CNICN_DigitalEBooksPaymentReport.xls">点我下载模版</a></small></p>
+				<h3>提示</h3>
+				<p>亚马逊美国模版要求：</p>
+				<ul>
+					<li class="fontRed">第一个Sheet是书单内容</li>
+					<li class="fontRed">Sheet名格式为CNIXX 20160301 - 20160401</li>
+				</ul>
+				<small><a href="${ctx }/temp/CNIXX_DigitalEBooksPaymentReport_20160301-20160401.xls">下载模版</a></small>
 			</blockquote>
 		</div>
 		<div class="row">
