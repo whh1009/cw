@@ -71,4 +71,10 @@ public class BookBaseModel extends Model<BookBaseModel> {
 	public Object getSumary(String sql) {
 		return Db.queryFirst(sql);
 	}
+	
+	//////////////////////////////////////////////////////
+	
+	public List<Record> getBookSaleByPlatform() {
+		
+	}
 }
