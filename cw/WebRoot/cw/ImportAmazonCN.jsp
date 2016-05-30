@@ -24,7 +24,7 @@
 		<div class="row">
 			<blockquote>
 				<h3>提示</h3>
-				<p>亚马逊美国模版要求：</p>
+				<p>亚马逊中国模版要求：</p>
 				<ul>
 					<li class="fontRed">第一个Sheet是书单内容</li>
 					<li class="fontRed">Sheet名格式为CNIXX 20160301 - 20160401</li>
