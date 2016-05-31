@@ -14,29 +14,8 @@
 .glyphicon-trash, .fontRed{
 	color:red;
 }
-
 </style>
-<script>
-$(function() {
-	
-})
 
-function checkFile() {
-		 var file = $("#file").val();
-		 if(file==null||file==undefined||file=="") {
-			 alert("请至少选择一个excel");
-			 return false;
-		 } else {
-			 var ext = file.substring(file.lastIndexOf(".")+1, file.length).toLowerCase();
-			 if(ext=="xlsx"||ext=="xls") {
-				 return true;
-			 } else {
-				 alert("亲，建议上传07版本以上excel哦");
-				 return false;
-			 }
-		 }
-	 }
-</script>
 <!-- http://work.smarchal.com/twbscolor/css/e74c3cc0392becf0f1ffbbbc0 -->
 	<nav class="navbar navbar-default" role="navigation">
 		<div class="container-fluid">
@@ -61,8 +40,9 @@ function checkFile() {
 							<!-- <li><a href="${ctx }/import/importOverDrivePage"><i class='glyphicon glyphicon-import'></i>&nbsp;OverDrive</a></li> -->
 						</ul>
 					</li>
-					<li><a href="${ctx }/book/bookList"><i class='glyphicon glyphicon-tasks'></i>&nbsp;图书列表</a></li>
+					<li><a href="${ctx }/book/bookList"><i class='glyphicon glyphicon-tasks'></i>&nbsp;基本图书列表</a></li>
 					<li><a href="${ctx }/book/bookPriceList"><i class='glyphicon glyphicon-signal'></i>&nbsp;图书价格列表</a></li>
+					<li><a href="${ctx }/book/bookPriceSummary"><i class='glyphicon glyphicon-signal'></i>&nbsp;图书价格汇总</a></li>
 					<li><a href="${ctx }/import/manageExcelList"><i class='glyphicon glyphicon-remove'></i>&nbsp;清理上传数据</a></li>
 				</ul>
 				<!-- 
@@ -85,3 +65,24 @@ function checkFile() {
 		</div>
 		<!-- /.container-fluid -->
 	</nav>
+<script>
+$(function() {
+	
+})
+
+function checkFile() {
+		 var file = $("#file").val();
+		 if(file==null||file==undefined||file=="") {
+			 alert("请至少选择一个excel");
+			 return false;
+		 } else {
+			 var ext = file.substring(file.lastIndexOf(".")+1, file.length).toLowerCase();
+			 if(ext=="xlsx"||ext=="xls") {
+				 return true;
+			 } else {
+				 alert("亲，建议上传07版本以上excel哦");
+				 return false;
+			 }
+		 }
+	 }
+</script>

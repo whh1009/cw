@@ -67,4 +67,10 @@ public class BookService {
 	public Record getBookPriceCount(String mySearchSql) {
 		return BookSaleModel.dao.getBookPriceCount(mySearchSql);
 	}
+	
+	///////////////////////////////////////////////////////////////
+	public Page<Record> getBookSaleByPlatform(int pageNumber) {
+		String condition = "";
+		return BookBaseModel.dao.getBookSaleByPlatform(pageNumber, condition);
+	}
 }

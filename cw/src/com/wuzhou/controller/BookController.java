@@ -75,6 +75,18 @@ public class BookController extends Controller {
 	}
 	
 	/**
+	 * 图书价格汇总
+	 */
+	public void bookPriceSummary() {
+		render("/cw/BookPriceSummary.jsp");
+	}
+	////
+	public void getBookSaleByPlatform() {
+		int pageNumber = getParaToInt("page", 1);
+		renderJson(service.getBookSaleByPlatform(pageNumber));
+	}
+	
+	/**
 	 * 被“删除”的图书
 	 */
 	public void bookDelPage() {

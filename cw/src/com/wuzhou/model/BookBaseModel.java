@@ -74,7 +74,11 @@ public class BookBaseModel extends Model<BookBaseModel> {
 	
 	//////////////////////////////////////////////////////
 	
-	public List<Record> getBookSaleByPlatform() {
-		
+	public Page<Record> getBookSaleByPlatform(int pageNumber, String condition) {
+		String sql = " ";
+		sql+= " FROM book_base b, book_sale s WHERE b.book_isbn = s.book_isbn AND b.book_isbn IS NOT NULL AND b.book_isbn != '' AND s.book_isbn IS NOT NULL ";
+		sql+=" "+condition+" ";
+		sql+= " GROUP BY s.book_isbn, s.platform ";
+		return Db.paginate(pageNumber, 15, "SELECT b.*, s.sale_time, sum(s.sale_total_price) price, sum(s.sale_total_count) count, s.platform", sql);
 	}
 }
