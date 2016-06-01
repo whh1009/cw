@@ -24,8 +24,10 @@ table {
 </style>
 
 <link href="${ctx }/css/showLoading.css" rel="stylesheet">
+<link rel="stylesheet" type="text/css" media="all" href="${ctx }/css/daterangepicker-bs3.css" />
 <script src="${ctx }/js/jquery.showLoading.min.js"></script>
-
+<script src="${ctx }/js/moment.js"></script>
+<script src="${ctx }/js/daterangepicker.js"></script>
 <script type="text/javascript">
 	
 </script>
@@ -34,6 +36,49 @@ table {
 <body>
 	<jsp:include page="_header.jsp"></jsp:include>
 	<div class="container-fluid">
+		<div class="row">
+			<div class="col-sm-8 controls">
+				<div class="input-prepend input-group">
+					<span class="add-on input-group-addon">
+						<i class="glyphicon glyphicon-calendar"></i>
+					</span>
+					<input type="text" style="width: 400px" name="reservation" id="reservationtime" class="form-control" value="" class="col-sm-6" readonly />
+				</div>
+			</div>
+			<script type="text/javascript">
+				$(document).ready(function() {
+					//取消readonly后退键
+					$("input[readonly]").keydown(function(e) { 
+						e.preventDefault();
+					});
+					$('#reservationtime').daterangepicker({
+						//timePickerIncrement: 30,
+						format: 'YYYY-MM'
+					},
+					function(start, end, label) {
+						console.log(start.toISOString(), end.toISOString(), label);
+					});
+				});
+			</script>
+			<div class="col-sm-4">
+    			<button type="button" class="btn btn-info" onclick="initSearch(1)"><i class='glyphicon glyphicon-search'></i> 查询</button>
+    		</div>
+		</div>
+		<div class="row" id="demo">
+    		<div class="col-sm-4">
+    			<label>检索条件：</label>
+    			<select class="sType0 form-control">
+    			</select>
+    		</div>
+    		<div class="col-sm-4">
+    			<label>检索值：</label>
+    			<input type="text" class="form-control sVal0" placeholder="模糊检索">
+    		</div>
+    		<div class="col-sm-4">
+    			<br />
+    			<small style="cursor:pointer" data-toggle="tooltip" data-placement="right" title="添加检索条件" onclick="addSearchConditionBtn()"><i class="glyphicon glyphicon-plus"></i></small>
+    		</div>
+    	</div>
 		<!-- 
 		<div class="row">
 			<div class="form-inline">
@@ -72,11 +117,15 @@ table {
 	<script>
 		var _page = 1;
 		var _mySearchSql= "";
+		var searchConditionJson = ${searchConditionJson};
+		var conditionCount=0;
 		$(function() {
 			//initPlatform();
 			//initSaleTime();
 			initTableHeader();
-			initTableBody();
+			
+			$('[data-toggle="tooltip"]').tooltip();
+	    	initSearchSel(".sType"+conditionCount);
 		});
 		
 		//初始化第三方平台
@@ -135,21 +184,12 @@ table {
 			$("#tableContent thead").html(header);
 		}
 		
-		//初始化表格正文
-		function initTableBody() {
-			initSearch(1);
-		}
+		
 		
 		function initSearch(page) {
 			_mySearchSql = "";
-			var saleTime = $("#saleTimeSel").val();
-			var platform = $("#platformSel").val();
-			if(saleTime!="0"&&saleTime!="") {
-				_mySearchSql += " and sale_time = "+saleTime;
-			}
-			if(platform!="0"&&platform!="") {
-				_mySearchSql += " and platform = " + platform;
-			}
+			getSearchCondition();
+			console.log(_mySearchSql);
 			$.ajax({
 				url:"${ctx}/book/getBookSaleByPlatform",
 				method:"POST",
@@ -161,29 +201,31 @@ table {
 					$("#tableContent tbody").html("");
 					$("#tableContent").hideLoading();
 					if(data) {
-						if(data.length>0) {
+						console.log(data);
+						if(data.totalRow>0) {
 							var content= "";
-							for(var i = 0; i<data.length; i++) {
-								content+="<tr><td>"+data[i].book_isbn+"</td>";
-								content+=    "<td>"+data[i].book_name+"</td>";
-								content+=    "<td>"+data[i].book_author+"</td>";
-								content+=    "<td>"+data[i].sale_time+"</td>";
-								content+=    "<td>"+data[i].sale_total_price+"</td>";
-								content+=    "<td>"+data[i].sale_total_count+"</td>";
-								if(data[i].platform==2) {
-									content+="<td>亚马逊美国</td>";
-								} else if(data[i].platform==3) {
-									content+="<td>亚马逊中国</td>";
-								} else if(data[i].platform==4) {
-									content+="<td>App Store</td>";
-								} else if(data[i].platform=5) {
-									content+="<td>Over Drive</td>";
+							for(var i = 0; i<data.list.length; i++) {
+								content+="<tr><td style='vertical-align: middle;'>"+data.list[i].book_isbn+"</td>";
+								content+=    "<td style='vertical-align: middle;'>"+data.list[i].book_name+"</td>";
+								content+=    "<td style='vertical-align: middle;'>作者："+data.list[i].book_author+"<br />文种："+data.list[i].book_lang+"<br />转码公司："+data.list[i].trans_company+"<br />转码时间："+data.list[i].trans_time+"<br />出版社："+data.list[i].is_self+"</td>";
+								content+=    "<td style='vertical-align: middle;'>"+data.list[i].sale_time+"</td>";
+								content+=    "<td style='vertical-align: middle;'>PDF价格："+data.list[i].pdf_price+"<br />EPUB价格："+data.list[i].epub_price+"<br />广告费："+data.list[i].ad_price+"<br />样章："+data.list[i].yz_price+"<br />其他费用1："+data.list[i].ext_price1+"<br />其他费用2："+data.list[i].ext_price2+"<br />其他费用3："+data.list[i].ext_price3+"<br />其他费用4："+data.list[i].ext_price4+"<br />其他费用5："+data.list[i].ext_price5+"<br /></td>";
+								content+=    "<td style='vertical-align: middle;'>"+data.list[i].count+"</td>";
+								content+=    "<td style='vertical-align: middle;'>"+data.list[i].price+"</td>";
+								if(data.list[i].platform==2) {
+									content+="<td style='vertical-align: middle;'>亚马逊美国</td>";
+								} else if(data.list[i].platform==3) {
+									content+="<td style='vertical-align: middle;'>亚马逊中国</td>";
+								} else if(data.list[i].platform==4) {
+									content+="<td style='vertical-align: middle;'>App Store</td>";
+								} else if(data.list[i].platform=5) {
+									content+="<td style='vertical-align: middle;'>Over Drive</td>";
 								}
 								content+="</tr>";
 							}
 							$("#tableContent tbody").html(content);
 							initPage(data.pageNumber, data.totalPage, data.totalRow);
-							initPriceCount();
+							//initPriceCount();
 						} else {
 							$("#tableContent tbody").html("<tr><td><font color='red'>暂无数据</font></td></tr>");
 							$("#page").html("");
@@ -242,10 +284,59 @@ table {
 			$("#page").html(page);
 		}
 			
-		//导出
-		function importData() {
-			
-		}
-	</script>
+	  //初始化检索条件select
+	    function initSearchSel(arg) {
+	    	if(searchConditionJson) {
+	    		var option = "<option value='0' selected>请选择</option>";
+	    		for(key in searchConditionJson) {
+	    			option+="<option value='"+key+"'>"+searchConditionJson[key]+"</option>";
+	    		}
+	    		$(arg).html(option);
+	    	}
+	    }
+	  
+	  //添加检索条件框
+	function addSearchConditionBtn() {
+    	conditionCount++;
+    	var content = "<div class='row'>";
+    	content+="<div class='col-sm-4'><select class='sType"+conditionCount+" form-control'><option value='0'>请选择</option></select></div>";
+    	content+="<div class='col-sm-4'><input type='text' class='form-control sVal"+conditionCount+"' placeholder='模糊检索'></div>";
+    	content+="<div class='col-sm-4'><small style='cursor:pointer' data-toggle='tooltip' data-placement='top' title='删除检索条件' onclick='removeSearchConditionBtn(this)'><i class='glyphicon glyphicon-minus'></i></small></div>";
+    	content+="</div>";
+    	$("#demo").after(content);
+    	$('[data-toggle="tooltip"]').tooltip();
+    	initSearchSel(".sType"+conditionCount);
+    	
+    }
+    
+    //删除检索条件框
+    function removeSearchConditionBtn(arg) {
+    	$(arg).parent().parent().remove();
+    }
+		
+  //检索
+    function getSearchCondition(){
+    	/*
+    	var excelName = $("#excelSel").val();
+    	if(excelName!=0) {
+    		mySearchSql+=" and server_excel_name = "+excelName;
+    	}
+    	*/
+    	$("select[class^=sType]").each(function() {
+    		var s = $(this).val();
+    		var temp = $(this).attr("class").replace(" form-control","").replace("sType", "");
+    		var v = $(".sVal"+temp).val();
+    		console.log("--"+s+"--"+temp+"--"+v);
+    		if(s!="0") {
+    			if(s=="book_isbn"||s=="book_name") {
+    				_mySearchSql+=" and b."+s+" like '%"+v+"%'";
+    			} else {
+    				_mySearchSql+=" and s."+s+" like '%"+v+"%'";
+    			}
+    			
+    		}
+    	});
+    }
+  </script>
 </body>
 </html>

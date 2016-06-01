@@ -78,12 +78,14 @@ public class BookController extends Controller {
 	 * 图书价格汇总
 	 */
 	public void bookPriceSummary() {
+		setAttr("searchConditionJson", JsonKit.toJson(BookBaseBean.getInstence().bookPriceSummaryConditionMap));
 		render("/cw/BookPriceSummary.jsp");
 	}
 	////
 	public void getBookSaleByPlatform() {
 		int pageNumber = getParaToInt("page", 1);
-		renderJson(service.getBookSaleByPlatform(pageNumber));
+		String mySearchSql = getPara("mySearchSql", "");
+		renderJson(service.getBookSaleByPlatform(pageNumber, mySearchSql));
 	}
 	
 	/**

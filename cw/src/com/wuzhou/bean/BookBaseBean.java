@@ -8,12 +8,14 @@ public class BookBaseBean {
 	public static Map<String, String> importMap;
 	public static Map<String, String> exportMap;
 	public static Map<String, String> searchConditionMap;
+	public static Map<String, String> bookPriceSummaryConditionMap;
 	public BookBaseBean() {	}
 	
 	public static BookBaseBean getInstence() {
 		if(single==null) {
 			single = new BookBaseBean();
 			single.initSearchCondition();
+			single.initBookPriceSummarySearchCondition();
 			single.initExportMap();
 		}
 		return single;
@@ -29,6 +31,17 @@ public class BookBaseBean {
 		searchConditionMap.put("book_lang", "文种");
 		searchConditionMap.put("book_author", "责编");
 		searchConditionMap.put("trans_company", "转码公司");
+	}
+	
+	/**
+	 * 初始化图书价格汇总检索条件
+	 */
+	private void initBookPriceSummarySearchCondition() {
+		bookPriceSummaryConditionMap = new HashMap<String, String>();
+		bookPriceSummaryConditionMap.put("book_name", "书名");
+		bookPriceSummaryConditionMap.put("book_isbn", "ISBN");
+		bookPriceSummaryConditionMap.put("book_isbn", "销售月份"); //时间段
+		bookPriceSummaryConditionMap.put("platform", "平台");
 	}
 	
 	/**

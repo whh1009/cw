@@ -69,8 +69,7 @@ public class BookService {
 	}
 	
 	///////////////////////////////////////////////////////////////
-	public Page<Record> getBookSaleByPlatform(int pageNumber) {
-		String condition = "";
-		return BookBaseModel.dao.getBookSaleByPlatform(pageNumber, condition);
+	public Page<Record> getBookSaleByPlatform(int pageNumber, String mySearchSql) {
+		return BookBaseModel.dao.getBookSaleByPlatform(pageNumber, mySearchSql);
 	}
 }
