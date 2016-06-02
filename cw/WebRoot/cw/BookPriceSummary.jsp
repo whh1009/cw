@@ -37,33 +37,46 @@ table {
 	<jsp:include page="_header.jsp"></jsp:include>
 	<div class="container-fluid">
 		<div class="row">
-			<div class="col-sm-8 controls">
-				<div class="input-prepend input-group">
-					<span class="add-on input-group-addon">
-						<i class="glyphicon glyphicon-calendar"></i>
-					</span>
-					<input type="text" style="width: 400px" name="reservation" id="reservationtime" class="form-control" value="" class="col-sm-6" readonly />
-				</div>
-			</div>
-			<script type="text/javascript">
+			<div class="col-sm-3">
+				<div class="input-group">
+			    	<span class="input-group-addon">
+			        	<label><input type="radio" name="timeRadio" value="0" checked onclick="timeSel(1)" />&nbsp;&nbsp;<i class="glyphicon glyphicon-calendar"></i></label>
+			      	</span>
+			      	<input type="text" style="width: 200px" name="singletime" id="singletime" class="form-control" value="" readonly />
+	    		</div>
+    		</div>
+    		<div class="col-sm-5">
+	    		<div class="input-group">
+			    	<span class="input-group-addon">
+			        	<label><input type="radio" name="timeRadio" value="1" onclick="timeSel(2)" />&nbsp;&nbsp;<i class="glyphicon glyphicon-calendar"></i> <i class="glyphicon glyphicon-calendar"></i></label>
+			      	</span>
+			      	<input type="text" style="width: 400px" name="reservationtime" id="reservationtime" class="form-control" value="" readonly />
+	    		</div>
+	    	</div>
+	    	<script type="text/javascript">
 				$(document).ready(function() {
 					//取消readonly后退键
 					$("input[readonly]").keydown(function(e) { 
 						e.preventDefault();
 					});
-					$('#reservationtime').daterangepicker({
-						//timePickerIncrement: 30,
-						format: 'YYYY-MM'
-					},
-					function(start, end, label) {
-						console.log(start.toISOString(), end.toISOString(), label);
+					$('#singletime').daterangepicker({
+							format: 'YYYY-MM',
+							singleDatePicker:true,
+							startDate: moment(),
+							maxDate: moment()
 					});
+					$('#reservationtime').daterangepicker({
+							format: 'YYYY-MM',
+							maxDate: moment()
+						}
+					);
 				});
 			</script>
 			<div class="col-sm-4">
     			<button type="button" class="btn btn-info" onclick="initSearch(1)"><i class='glyphicon glyphicon-search'></i> 查询</button>
     		</div>
 		</div>
+		
 		<div class="row" id="demo">
     		<div class="col-sm-4">
     			<label>检索条件：</label>
@@ -79,33 +92,7 @@ table {
     			<small style="cursor:pointer" data-toggle="tooltip" data-placement="right" title="添加检索条件" onclick="addSearchConditionBtn()"><i class="glyphicon glyphicon-plus"></i></small>
     		</div>
     	</div>
-		<!-- 
-		<div class="row">
-			<div class="form-inline">
-				<div class="form-group">
-					<label>平台：</label>
-					<select class="form-control" id="platformSel">
-						<option value="0">请选择平台</option>
-					</select>
-				</div>
-				<div class="form-group">
-					<label>时间：</label>
-					<select class="form-control" id="saleTimeSel">
-						<option value="0">请选择月份</option>
-					</select>
-				</div>
-				<div class="form-group">
-					<button class="btn btn-success" onclick="initSearch(1)"><i class="glyphicon glyphicon-search"></i>&nbsp;检索</button>
-				</div>
-				<div class="form-group">
-					<button class="btn btn-info" onclick="importData()"><i class="glyphicon glyphicon-import"></i>&nbsp;导出</button>
-				</div>
-			</div>
-		</div>
-		<div class="row">
-			<div id="priceCountDiv"></div>
-		</div>
-		 -->
+    	
 		<div class="row">
 			<table class="table table-hover" id="tableContent">
 				<thead></thead>
@@ -126,6 +113,7 @@ table {
 			
 			$('[data-toggle="tooltip"]').tooltip();
 	    	initSearchSel(".sType"+conditionCount);
+	    	
 		});
 		
 		//初始化第三方平台
@@ -189,7 +177,7 @@ table {
 		function initSearch(page) {
 			_mySearchSql = "";
 			getSearchCondition();
-			console.log(_mySearchSql);
+			console.log("condition:"+_mySearchSql);
 			$.ajax({
 				url:"${ctx}/book/getBookSaleByPlatform",
 				method:"POST",
@@ -201,7 +189,6 @@ table {
 					$("#tableContent tbody").html("");
 					$("#tableContent").hideLoading();
 					if(data) {
-						console.log(data);
 						if(data.totalRow>0) {
 							var content= "";
 							for(var i = 0; i<data.list.length; i++) {
@@ -234,7 +221,7 @@ table {
 				},
 				error:function() {
 					$("#tableContent").hideLoading();
-					
+					console.log("---error---");
 				}
 			});
 		}
@@ -316,17 +303,22 @@ table {
 		
   //检索
     function getSearchCondition(){
-    	/*
-    	var excelName = $("#excelSel").val();
-    	if(excelName!=0) {
-    		mySearchSql+=" and server_excel_name = "+excelName;
+    	var timeSel = $("input[name='timeRadio']:checked").val();
+    	if(timeSel=="0") {
+    		var singleTime = $("#singletime").val();
+    		if(singleTime!="") {
+    			_mySearchSql+=" and b.saleTime = '"+singleTime+"'";
+    		}
+    	} else {
+    		var reservationTime = $("#reservationtime").val();
+    		if(reservationTime!="") {
+    			_mySearchSql+=" and b.saleTime bewteen '"+reservationTime.split(" \- ")[0]+"' and '"+reservationTime.split(" \- ")[1]+"''";
+    		}
     	}
-    	*/
     	$("select[class^=sType]").each(function() {
     		var s = $(this).val();
     		var temp = $(this).attr("class").replace(" form-control","").replace("sType", "");
     		var v = $(".sVal"+temp).val();
-    		console.log("--"+s+"--"+temp+"--"+v);
     		if(s!="0") {
     			if(s=="book_isbn"||s=="book_name") {
     				_mySearchSql+=" and b."+s+" like '%"+v+"%'";
@@ -337,6 +329,22 @@ table {
     		}
     	});
     }
+  
+	function timeSel(arg){
+		if(arg==1) {
+			$("input[name='timeRadio']").each(function(i){
+				if(i>0){
+					$("#reservationtime").val("");
+				}
+			});
+		} else {
+			$("input[name='timeRadio']").each(function(i){
+				if(i<1){
+					$("#singletime").val("");
+				}
+			});
+		}
+  }
   </script>
 </body>
 </html>
