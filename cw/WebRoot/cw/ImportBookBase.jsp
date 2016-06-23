@@ -24,7 +24,7 @@
 		<div class="row">
 			<blockquote>
 				<h3>提示：</h3>
-				<p><small>请上传正确的模板，若不清楚模板格式可以<a href="${ctx }/temp/基本表导入模板.xlsx">点我下载</a></small></p>
+				<p><small>请上传正确的模板，若不清楚模板格式可以<a href="${ctx }/temp/baseTemp.xlsx">点我下载</a></small></p>
 			</blockquote>
 		</div>
 		<div class="row">
