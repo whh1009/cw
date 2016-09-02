@@ -41,7 +41,7 @@
 						</ul>
 					</li>
 					<li><a href="${ctx }/book/bookList"><i class='glyphicon glyphicon-tasks'></i>&nbsp;电子书支出详情</a></li>
-					<li><a href="${ctx }/book/bookPriceList"><i class='glyphicon glyphicon-signal'></i>&nbsp;电子书支出详细</a></li>
+					<li><a href="${ctx }/book/bookPriceList"><i class='glyphicon glyphicon-signal'></i>&nbsp;电子书销售详情</a></li>
 					<li><a href="${ctx }/book/bookPriceSummary"><i class='glyphicon glyphicon-signal'></i>&nbsp;电子书收支汇总</a></li>
 					<li><a href="${ctx }/import/manageExcelList"><i class='glyphicon glyphicon-remove'></i>&nbsp;清理上传数据</a></li>
 				</ul>
