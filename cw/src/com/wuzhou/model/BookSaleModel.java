@@ -8,7 +8,7 @@ import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 /**
- * 亚马逊美国
+ * 电子书收入
  * 
  * @author wanghonghui
  * 

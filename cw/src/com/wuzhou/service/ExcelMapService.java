@@ -3,6 +3,7 @@ package com.wuzhou.service;
 import java.util.Date;
 import java.util.List;
 
+import com.jfinal.plugin.activerecord.Page;
 import com.wuzhou.model.ExcelMapModel;
 import com.wuzhou.tool.TimeTools;
 
@@ -37,6 +38,10 @@ public class ExcelMapService {
 	 */
 	public List<ExcelMapModel> getExcelList(int type) {
 		return ExcelMapModel.dao.getExcelList(type);
+	}
+	
+	public Page<ExcelMapModel> getExcelByPage(int page) {
+		return ExcelMapModel.dao.getExcelByPage(page);
 	}
 	
 	/**

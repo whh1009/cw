@@ -34,14 +34,17 @@
 					<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">数据导入 <span class="caret"></span></a>
 						<ul class="dropdown-menu">
 							<li><a href="${ctx }/import/importBaseBookPage"><i class='glyphicon glyphicon-import'></i>&nbsp;电子书支出录入</a></li>
+							<li><a href="${ctx }/import/importInComingExcel"><i class='glyphicon glyphicon-import'></i>&nbsp;电子书收入录入</a></li>
+							<!-- 
 							<li><a href="${ctx }/import/importAmazonCNBookPage"><i class='glyphicon glyphicon-import'></i>&nbsp;亚马逊（中国）</a></li>
 							<li><a href="${ctx }/import/importAmazonUSBookPage"><i class='glyphicon glyphicon-import'></i>&nbsp;亚马逊（美国）</a></li>
-							<li><a href="${ctx }/import/importAppStorePage"><i class='glyphicon glyphicon-import'></i>&nbsp;AppStore</a></li>
+							 -->
+							<li><a href="${ctx }/import/importAppStorePage"><i class='glyphicon glyphicon-import'></i>&nbsp;AppStore收入录入</a></li>
 							<!-- <li><a href="${ctx }/import/importOverDrivePage"><i class='glyphicon glyphicon-import'></i>&nbsp;OverDrive</a></li> -->
 						</ul>
 					</li>
 					<li><a href="${ctx }/book/bookList"><i class='glyphicon glyphicon-tasks'></i>&nbsp;电子书支出详情</a></li>
-					<li><a href="${ctx }/book/bookPriceList"><i class='glyphicon glyphicon-signal'></i>&nbsp;电子书销售详情</a></li>
+					<li><a href="${ctx }/incoming"><i class='glyphicon glyphicon-signal'></i>&nbsp;电子书销售详情</a></li>
 					<li><a href="${ctx }/book/bookPriceSummary"><i class='glyphicon glyphicon-signal'></i>&nbsp;电子书收支汇总</a></li>
 					<li><a href="${ctx }/import/manageExcelList"><i class='glyphicon glyphicon-remove'></i>&nbsp;清理上传数据</a></li>
 				</ul>

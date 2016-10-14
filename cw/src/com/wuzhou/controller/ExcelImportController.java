@@ -11,6 +11,7 @@ import com.jfinal.aop.Enhancer;
 import com.jfinal.core.Controller;
 import com.jfinal.kit.JsonKit;
 import com.jfinal.kit.PathKit;
+import com.jfinal.kit.StrKit;
 import com.jfinal.upload.UploadFile;
 import com.wuzhou.Result;
 import com.wuzhou.config.Constraint;
@@ -70,6 +71,10 @@ public class ExcelImportController extends Controller{
 	 */
 	public void importOverDrivePage() {
 		render("/cw/ImportOverDrive.jsp");
+	}
+	
+	public void importInComingExcel() {
+		render("/cw/ImportInComingExcel.jsp");
 	}
 	
 	/**
@@ -148,24 +153,31 @@ public class ExcelImportController extends Controller{
 			try {
 				String uploadPath = PathKit.getWebRootPath()+File.separator+"uploadFiles"+File.separator;
 				setAttr("name", excelName);
-				if("2".equals(type)) { //亚马逊美国
-					setAttr("result", JsonKit.toJson(service.parserAmazonUSExcelToList(uploadPath+excelName)));
-				} else if("3".equals(type)) { //亚马逊中国
-					setAttr("result", JsonKit.toJson(service.parserAmazonCNExcelToList(uploadPath+excelName)));
-				} else if("4".equals(type)) { //appStore
-					setAttr("result", JsonKit.toJson(service.parserAppStoreZipToList(uploadPath+excelName)));
-				} else if("5".equals(type)) { //overDrive
-					
-				} else if("6".equals(type)) { //That's books
-					
+				if("2".equals(type)) { //固定模板 电子书收入
+					setAttr("result", JsonKit.toJson(service.parserIncomingExcelToList(uploadPath+excelName)));
+					render("/cw/MyIncomingExcel.jsp");
+				} else if("1".equals(type)){ //电子书支出
+//					if("2".equals(type)) { //亚马逊美国
+//						setAttr("result", JsonKit.toJson(service.parserAmazonUSExcelToList(uploadPath+excelName)));
+//					} else if("3".equals(type)) { //亚马逊中国
+//						setAttr("result", JsonKit.toJson(service.parserAmazonCNExcelToList(uploadPath+excelName)));
+//					} else if("4".equals(type)) { //appStore
+//						setAttr("result", JsonKit.toJson(service.parserAppStoreZipToList(uploadPath+excelName)));
+//					} else if("5".equals(type)) { //overDrive
+//						
+//					} else if("6".equals(type)) { //That's books
+//						
+//					}
+					render("/cw/MyExcel.jsp");
 				}
 			} catch(Exception ex) {
 				setAttr("result", JsonKit.toJson(ex.getMessage()));
 				ex.printStackTrace();
 				log.error(ex);
+				render("/cw/MyIncomingExcel.jsp");
 			}
 		}
-		render("/cw/MyExcel.jsp");
+		
 	}
 	
 	
@@ -195,11 +207,24 @@ public class ExcelImportController extends Controller{
 		renderJson(excelMapService.getExcelList(0));
 	}
 	
+	public void getExcelByPage() {
+		int page = getParaToInt("page", 1);
+		try {
+			renderJson(excelMapService.getExcelByPage(page));
+		} catch(Exception ex) {
+			renderJson("");
+			log.error(ex);
+			ex.printStackTrace();
+		}
+		
+	}
+	
 	
 	public void removeExcel() {
 		String excelName= getPara("excelName");
+		String type = getPara("type");
 		try {
-			if("".equals(excelName)) {
+			if(StrKit.isBlank(excelName)||StrKit.isBlank(type)) {
 				renderJson("0");
 				return;
 			}
@@ -219,7 +244,7 @@ public class ExcelImportController extends Controller{
 			}
 			//删除实际数据
 			try {
-				service.deleteByServerName(excelName);
+				service.deleteByServerName(type, excelName);
 			} catch(Exception e3) {
 				e3.printStackTrace();
 				log.error(e3);

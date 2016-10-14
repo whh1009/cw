@@ -49,6 +49,26 @@ table {
 					</select>
 				</div>
 				<div class="form-group">
+					<label>语种：</label>
+					<select class="form-control" id="bookLanSel">
+						<option value="0">请选择语种</option>
+					</select>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="form-inline">
+				<div class="form-group">
+					<input type="text" class="form-control" id="bookNumTxt" placeholder="请输入书号">
+				</div>
+				<div class="form-group">
+					<input type="text" class="form-control" id="bookNameTxt" placeholder="请输入书名">
+				</div>
+				<div class="form-group">
+					<input type="text" class="form-control" id="bookAuthorTxt" placeholder="请输入作者">
+				</div>
+				
+				<div class="form-group">
 					<button class="btn btn-success" onclick="initSearch(1)"><i class="glyphicon glyphicon-search"></i>&nbsp;检索</button>
 				</div>
 				<div class="form-group">
@@ -73,36 +93,57 @@ table {
 		$(function() {
 			initPlatform();
 			initSaleTime();
+			initBookLan();
 			initTableHeader();
 			initTableBody();
 		});
 		
+		function mySearchCon() {
+			_mySearchSql="";
+			var saleTime = $("#saleTimeSel").val();
+			var platform = $("#platformSel").val();
+			var bookNum = $("#bookNumTxt").val();
+			var bookName = $("#bookNameTxt").val();
+			var bookAuthor = $("#bookAuthorTxt").val();
+			var bookLan = $("#bookLanSel").val();
+			if(saleTime!="0"&&saleTime!="") {
+				_mySearchSql += " and sale_time = '"+saleTime+"'";
+			}
+			if(platform!="0"&&platform!="") {
+				_mySearchSql += " and platform = '" + platform+"'";
+			}
+			if(bookName!="") {
+				_mySearchSql+=" and book_name like '%"+bookName+"%'";
+			}
+			if(bookNum!="") {
+				_mySearchSql+=" and book_num like '%"+bookNum+"%'";
+			}
+			
+			if(bookAuthor!="") {
+				_mySearchSql+=" and book_author like '%"+bookAuthor+"%'";
+			}
+			
+			if(bookLan!="0"&&bookLan!="") {
+				_mySearchSql+=" and book_lan = '"+bookLan+"'";
+			}
+		}
+		
 		//初始化第三方平台
 		function initPlatform() {
-			$.post("${ctx}/book/getDistinctPlatform", {}, function(data) {
+			$.post("${ctx}/incoming/getDistinctPlatform", {}, function(data) {
 				var platformSel = "<option value='0'>请选择平台</option>";
 				if(data) {
-					console.log(data);
 					for(var i=0;i<data.length;i++){
-						if(data[i].platform==1) {
-							platformSel+="<option value='1'>基本表</option>";
-						} else if(data[i].platform==2) {
-							platformSel+="<option value='2'>亚马逊美国</option>";
-						} else if(data[i].platform==3) {
-							platformSel+="<option value='3'>亚马逊中国</option>";
-						} else if(data[i].platform==4){
-							platformSel+="<option value='4'>App Store</option>";
-						} else if(data[i].platform==5) {
-							platformSel+="<option value='5'>Over Drive</option>";
-						}
+						platformSel+="<option value='"+data[i].platform+"'>"+data[i].platform+"</option>";
 					}
 				}
 				$("#platformSel").html(platformSel);
 			});
 		}
 		
+		//初始化时间
 		function initSaleTime() {
-			$.post("${ctx}/book/getDistinctSaleTime", {}, function(data) {
+			$.post("${ctx}/incoming/getDistinctSaleTime", {}, function(data) {
 				var saleTimeSel = "<option value='0'>请选择月份</option>";
 				if(data) {
 					for(var i=0;i<data.length;i++){
@@ -113,23 +154,27 @@ table {
 			});
 		}
 		
+		function initBookLan() {
+			$.post("${ctx}/incoming/getDistinctBookLan", {}, function(data){
+				var bookLanSel = "<option value='0'>请选择语种</option>";
+				if(data) {
+					for(var i=0; i<data.length; i++) {
+						bookLanSel += "<option value='"+data[i].book_lan+"'>"+data[i].book_lan+"</option>";
+					}
+				}
+				$("#bookLanSel").html(bookLanSel);
+			});
+		}
+		
 		function initPriceCount() {
-			var saleTime = $("#saleTimeSel").val();
-			var platform = $("#platformSel").val();
-			if(saleTime!="0"&&saleTime!="") {
-				_mySearchSql += " and sale_time = "+saleTime;
-			}
-			if(platform!="0"&&platform!="") {
-				_mySearchSql += " and platform = " + platform;
-			}
-			$.post("${ctx}/book/getBookPriceCount", {mySearchSql:_mySearchSql}, function(data){
-				$("#priceCountDiv").html("<div class='alert alert-info' role='alert'><strong>汇总</strong>&nbsp;&nbsp;&nbsp;&nbsp;总数："+data.count+"&nbsp;&nbsp;&nbsp;&nbsp;总价："+data.price+"</div>");
+			$.post("${ctx}/incoming/getBookPriceCount", {mySearchSql:_mySearchSql}, function(data){
+				$("#priceCountDiv").html("<div class='alert alert-info' role='alert'><strong>汇总</strong>&nbsp;&nbsp;&nbsp;&nbsp;销售册数："+data.count+"&nbsp;&nbsp;&nbsp;回款人民币：￥"+data.rmb+"&nbsp;&nbsp;&nbsp;回款美元：$"+data.dollar+"</div>");
 			});
 		}
 		
 		//初始化表格标题
 		function initTableHeader() {
-			var header = "<tr><th>ISBN</th><th>书名</th><th>作者</th><th>时间</th><th>总金额</th><th>总量</th><th>平台</th></tr>";
+			var header = "<tr><th>账单平台</th><th>账单日期</th><th>书号</th><th>书名</th><th>作者</th><th>文种</th><th>销售册数</th><th>原价</th><th>折扣率</th><th>回款人民币</th><th>回款美元</th><th>备注</th></tr>";
 			$("#tableContent thead").html(header);
 		}
 		
@@ -139,17 +184,9 @@ table {
 		}
 		
 		function initSearch(page) {
-			_mySearchSql = "";
-			var saleTime = $("#saleTimeSel").val();
-			var platform = $("#platformSel").val();
-			if(saleTime!="0"&&saleTime!="") {
-				_mySearchSql += " and sale_time = "+saleTime;
-			}
-			if(platform!="0"&&platform!="") {
-				_mySearchSql += " and platform = " + platform;
-			}
+			mySearchCon();
 			$.ajax({
-				url:"${ctx}/book/getBookPriceList",
+				url:"${ctx}/incoming/getIncomingByPage",
 				method:"POST",
 				data:{page:page, mySearchSql: _mySearchSql},
 				beforeSend:function() {
@@ -159,28 +196,25 @@ table {
 					$("#tableContent tbody").html("");
 					$("#tableContent").hideLoading();
 					if(data) {
-						if(data.list.length>0) {
+						if(data.out.list&&data.out.totalRow>0) {
 							var content= "";
-							for(var i = 0; i<data.list.length; i++) {
-								content+="<tr><td>"+data.list[i].book_isbn+"</td>";
-								content+=    "<td>"+data.list[i].book_name+"</td>";
-								content+=    "<td>"+data.list[i].book_author+"</td>";
-								content+=    "<td>"+data.list[i].sale_time+"</td>";
-								content+=    "<td>"+data.list[i].sale_total_price+"</td>";
-								content+=    "<td>"+data.list[i].sale_total_count+"</td>";
-								if(data.list[i].platform==2) {
-									content+="<td>亚马逊美国</td>";
-								} else if(data.list[i].platform==3) {
-									content+="<td>亚马逊中国</td>";
-								} else if(data.list[i].platform==4) {
-									content+="<td>App Store</td>";
-								} else if(data.list[i].platform=5) {
-									content+="<td>Over Drive</td>";
-								}
+							for(var i = 0; i<data.out.list.length; i++) {
+								content+="<tr><td>"+data.out.list[i].platform+"</td>";
+								content+=    "<td>"+data.out.list[i].sale_time+"</td>";
+								content+=    "<td>"+data.out.list[i].book_num+"</td>";
+								content+=    "<td>"+data.out.list[i].book_name+"</td>";
+								content+=    "<td>"+data.out.list[i].book_author+"</td>";
+								content+=    "<td>"+data.out.list[i].book_lan+"</td>";
+								content+=    "<td>"+data.out.list[i].sale_count+"</td>";
+								content+=    "<td>"+data.out.list[i].discount+"</td>";
+								content+=    "<td>"+data.out.list[i].zkl+"</td>";
+								content+=    "<td>"+data.out.list[i].sale_rmb+"</td>";
+								content+=    "<td>"+data.out.list[i].sale_dollar+"</td>";
+								content+=    "<td>"+data.out.list[i].remark+"</td>";
 								content+="</tr>";
 							}
 							$("#tableContent tbody").html(content);
-							initPage(data.pageNumber, data.totalPage, data.totalRow);
+							initPage(data.out.pageNumber, data.out.totalPage, data.out.totalRow);
 							initPriceCount();
 						} else {
 							$("#tableContent tbody").html("<tr><td><font color='red'>暂无数据</font></td></tr>");

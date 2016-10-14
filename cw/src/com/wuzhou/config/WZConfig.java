@@ -14,12 +14,14 @@ import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
 import com.jfinal.render.ViewType;
 import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 import com.wuzhou.controller.BookController;
+import com.wuzhou.controller.BookIncomingController;
 import com.wuzhou.controller.ExcelImportController;
 import com.wuzhou.controller.IndexController;
 import com.wuzhou.controller.UserController;
 import com.wuzhou.handler.WZHandler;
 import com.wuzhou.model.BookBaseModel;
 import com.wuzhou.model.BookSaleModel;
+import com.wuzhou.model.CwSaleModel;
 import com.wuzhou.model.ExcelMapModel;
 import com.wuzhou.model.UserModel;
 
@@ -41,6 +43,7 @@ public class WZConfig extends JFinalConfig {
 		me.add("/import", ExcelImportController.class);
 		me.add("/user", UserController.class);
 		me.add("/book", BookController.class);
+		me.add("/incoming", BookIncomingController.class);
 	}
 
 	@Override
@@ -56,6 +59,7 @@ public class WZConfig extends JFinalConfig {
 		arp.addMapping("book_base", BookBaseModel.class);
 		arp.addMapping("book_sale", BookSaleModel.class);
 		arp.addMapping("excel_map", ExcelMapModel.class);
+		arp.addMapping("cw_sale", CwSaleModel.class);
 		arp.setShowSql(true);
 		
 	}

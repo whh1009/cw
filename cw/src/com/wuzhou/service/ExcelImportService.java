@@ -25,10 +25,12 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import com.jfinal.kit.PathKit;
+import com.wuzhou.bean.BookIncomingEntity;
 import com.wuzhou.bean.BookSaleEntity;
 import com.wuzhou.config.Constraint;
 import com.wuzhou.model.BookBaseModel;
 import com.wuzhou.model.BookSaleModel;
+import com.wuzhou.model.CwSaleModel;
 import com.wuzhou.tool.FileUtil;
 import com.wuzhou.tool.POITools;
 import com.wuzhou.tool.StringUtil;
@@ -99,6 +101,35 @@ public class ExcelImportService {
 		} else {
 			return str;
 		}
+	}
+	
+	public List<BookIncomingEntity> parserIncomingExcelToList(String excelPath) throws Exception {
+		Workbook wb = POITools.getWorkbook(excelPath);
+		Sheet sheet = POITools.getSheet(0, wb); //第一个sheet
+		Row row = null;
+		List<BookIncomingEntity> list = new ArrayList<BookIncomingEntity>();
+		int count = 0;
+		for(int rowNumber = 1; rowNumber<POITools.getRowCount(sheet);rowNumber++) { //第一行标题行，从第二行开始
+			row = POITools.getRow(sheet, rowNumber);
+			if("".equals(POITools.getCellValue(row.getCell(0)))) break; //如果读到空行就返回
+			count++;
+			BookIncomingEntity bie = new BookIncomingEntity();
+			bie.setId(count);
+			bie.setPlatform(POITools.getCellValue(row.getCell(0)));
+			bie.setSaleTime(POITools.getCellValue(row.getCell(1)));
+			bie.setBookNum(POITools.getCellValue(row.getCell(2)));
+			bie.setBookName(POITools.getCellValue(row.getCell(3)));
+			bie.setBookAuthor(POITools.getCellValue(row.getCell(4)));
+			bie.setBookLan(POITools.getCellValue(row.getCell(5)));
+			bie.setSaleCount(Integer.parseInt(POITools.getCellValue(row.getCell(6))));
+			bie.setBookPrice(Float.parseFloat(POITools.getCellValue(row.getCell(7))));
+			bie.setZkl(Float.parseFloat(POITools.getCellValue(row.getCell(8))));
+			bie.setBookRmb(Float.parseFloat(POITools.getCellValue(row.getCell(9))));
+			bie.setBookDallor(Float.parseFloat(POITools.getCellValue(row.getCell(10))));
+			bie.setRemark(POITools.getCellValue(row.getCell(11)));
+			list.add(bie);
+		}
+		return list;
 	}
 	
 	public List<BookSaleEntity> parserAmazonUSExcelToList(String excelPath) throws Exception{
@@ -385,8 +416,13 @@ public class ExcelImportService {
 		return str;
 	}
 	
-	public void deleteByServerName(String serverName) {
-		BookSaleModel.dao.deleteByServerName(serverName);
+	public void deleteByServerName(String type, String serverName) {
+		if("2".equals(type)) {
+			CwSaleModel.dao.deleteByServerName(serverName);
+			
+		} else if("1".equals(type)) {
+			BookSaleModel.dao.deleteByServerName(serverName);
+		}
 	}
 	
 }
