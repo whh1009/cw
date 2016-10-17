@@ -72,7 +72,7 @@ table {
 					<button class="btn btn-success" onclick="initSearch(1)"><i class="glyphicon glyphicon-search"></i>&nbsp;检索</button>
 				</div>
 				<div class="form-group">
-					<button class="btn btn-info" onclick="importData()"><i class="glyphicon glyphicon-import"></i>&nbsp;导出</button>
+					<button class="btn btn-info" id="importBtn" onclick="importData()"><i class="glyphicon glyphicon-import"></i>&nbsp;导出</button>
 				</div>
 			</div>
 		</div>
@@ -168,7 +168,7 @@ table {
 		
 		function initPriceCount() {
 			$.post("${ctx}/incoming/getBookPriceCount", {mySearchSql:_mySearchSql}, function(data){
-				$("#priceCountDiv").html("<div class='alert alert-info' role='alert'><strong>汇总</strong>&nbsp;&nbsp;&nbsp;&nbsp;销售册数："+data.count+"&nbsp;&nbsp;&nbsp;回款人民币：￥"+data.rmb+"&nbsp;&nbsp;&nbsp;回款美元：$"+data.dollar+"</div>");
+				$("#priceCountDiv").html("<div class='alert alert-info' role='alert'>&nbsp;&nbsp;销售册数："+data.count+"&nbsp;&nbsp;&nbsp;回款人民币：￥"+data.rmb+"&nbsp;&nbsp;&nbsp;回款美元：$"+data.dollar+"</div>");
 			});
 		}
 		
@@ -276,7 +276,23 @@ table {
 			
 		//导出
 		function importData() {
-			
+			$.ajax({
+				url:"${ctx}/incoming/createExcelBySearch",
+				method:"POST",
+				data:{mySearchSql: _mySearchSql},
+				beforeSend:function() {
+					$("#importBtn").showLoading();
+				},
+				success:function(data) {
+					$("#importBtn").hideLoading();
+					console.log(data);
+					window.location.href = "${ctx}/incoming/downXlsx?n="+data;
+				},
+				error:function() {
+					$("#importBtn").hideLoading();
+					console.log("ajax error...........")
+				}
+			});
 		}
 	</script>
 </body>

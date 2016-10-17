@@ -32,26 +32,30 @@ public class CwSaleModel extends Model<CwSaleModel> {
 	 * @return
 	 */
 	public Page<CwSaleModel> getBookSaleList(int pageNumber, String mySearchSql) {
-		return paginate(pageNumber, 20, "select *", "from cw_sale where 1=1 " + mySearchSql + " order by id desc");
+		return paginate(pageNumber, 20, "SELECT *", "FROM cw_sale WHERE 1=1 " + mySearchSql + " ORDER BY id DESC");
 	}
 	
 	public List<CwSaleModel> getDistinctSaleTime() {
-		return this.find("select DISTINCT(sale_time) from cw_sale");
+		return this.find("SELECT DISTINCT(sale_time) FROM cw_sale");
 	}
 	
 	public List<CwSaleModel> getDistinctPlatform() {
-		return this.find("select distinct(platform) from cw_sale");
+		return this.find("SELECT DISTINCT(platform) FROM cw_sale");
 	}
 	
 	public List<CwSaleModel> getDistinctBookLan() {
-		return this.find("select distinct(book_lan) from cw_sale");
+		return this.find("SELECT DISTINCT(book_lan) FROM cw_sale");
 	}
 	
 	public Record getBookPriceCount(String mySearchSql) {
-		return Db.findFirst("select truncate(sum(sale_rmb), 2) as rmb, truncate(sum(sale_dollar), 2) as dollar, sum(sale_count) as count, truncate(sum(discount), 2) as discount from cw_sale where 1=1 ");
+		return Db.findFirst("SELECT TRUNCATE(sum(sale_rmb), 2) AS rmb, TRUNCATE(SUM(sale_dollar), 2) AS dollar, SUM(sale_count) AS count, TRUNCATE(SUM(discount), 2) AS discount FROM cw_sale WHERE 1=1 ");
 	}
 	
 	public void deleteByServerName(String serverName) {
-		Db.update("delete from cw_sale where server_excel_name = ?", serverName);
+		Db.update("DELETE FROM cw_sale WHERE server_excel_name = ?", serverName);
+	}
+	
+	public List<CwSaleModel> getAll(String mySearchSql) {
+		return find("SELECT * FROM cw_sale WHERE 1 = 1 " + mySearchSql + " ORDER BY id DESC");
 	}
 }

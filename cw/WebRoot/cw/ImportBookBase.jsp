@@ -40,7 +40,7 @@
         language: "zh",
         uploadUrl: "${ctx }/import/uploadBaseBookExcel",
         maxFilesNum: 1,
-        allowedFileExtensions : ["xlsx"],
+        allowedFileExtensions : ["xlsx"]
     });
 	$(function() {
 		$("#file").on("fileuploaded", function(event, data, previewId, index) {

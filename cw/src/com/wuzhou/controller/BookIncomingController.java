@@ -90,5 +90,25 @@ public class BookIncomingController extends Controller {
 			log.error(ex);
 		}
 	}
+	
+	/**
+	 * 导出
+	 */
+	public void createExcelBySearch() {
+		String mySearch = getPara("mySearchSql");
+		try {
+			String fileName = service.createExcelBySearch(mySearch);
+			renderText(fileName);
+		} catch(Exception ex) {
+			ex.printStackTrace();
+			log.error(ex);
+			renderText("");
+		}
+	}
+	
+	public void downXlsx() {
+		String fileName = getPara("n");
+		renderFile("/out/"+fileName);
+	}
 
 }
