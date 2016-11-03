@@ -44,7 +44,13 @@
 						</ul>
 					</li>
 					<li><a href="${ctx }/book/bookList"><i class='glyphicon glyphicon-tasks'></i>&nbsp;电子书支出详情</a></li>
-					<li><a href="${ctx }/incoming"><i class='glyphicon glyphicon-signal'></i>&nbsp;电子书销售详情</a></li>
+					<%-- <li><a href="${ctx }/incoming"><i class='glyphicon glyphicon-signal'></i>&nbsp;电子书销售详情</a></li> --%>
+					<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="glyphicon glyphicon-th-list"></i> 电子书销售详情 <span class="caret"></span></a>
+						<ul class="dropdown-menu">
+							<li><a href="${ctx }/incoming"><i class='glyphicon glyphicon-signal'></i>&nbsp;电子书销售列表</a></li>
+							<li><a href="${ctx }/incoming/priceList"><i class='glyphicon glyphicon-import'></i>&nbsp;销售排行榜</a></li>
+						</ul>
+					</li>
 					<li><a href="${ctx }/book/bookPriceSummary"><i class='glyphicon glyphicon-signal'></i>&nbsp;电子书收支汇总</a></li>
 					<li><a href="${ctx }/import/manageExcelList"><i class='glyphicon glyphicon-remove'></i>&nbsp;清理上传数据</a></li>
 				</ul>

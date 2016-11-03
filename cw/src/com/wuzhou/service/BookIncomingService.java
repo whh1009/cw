@@ -12,6 +12,7 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.util.DocumentHelper;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -133,5 +134,23 @@ public class BookIncomingService {
 			}
 		}
 		return "";
+	}
+	
+	public String getDistinctYear() throws Exception{
+		List<CwSaleModel> list = getDistinctSaleTime();
+		if(list==null||list.isEmpty()) {
+			return "";
+		} else {
+			String out = "";
+			for(CwSaleModel model : list) {
+				out+=model.getStr("sale_time")+",";
+			}
+			out = StringUtil.ignoreComma(out);
+			return out;
+		}
+	}
+	
+	public List<Record> getPriceList(String year, String month) {
+		return CwSaleModel.dao.getPriceList(year, month);
 	}
 }

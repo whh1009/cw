@@ -110,5 +110,29 @@ public class BookIncomingController extends Controller {
 		String fileName = getPara("n");
 		renderFile("/out/"+fileName);
 	}
+	
+	/**
+	 * 排行榜
+	 */
+	public void priceList() {
+		try{
+			setAttr("years", service.getDistinctYear());
+		}catch(Exception ex) {
+			ex.printStackTrace();
+			log.error(ex);
+			setAttr("years", "");
+		}
+		render("/cw/PriceList.jsp"); 
+	}
+	
+	public void getPriceList() {
+		String year = getPara("year");
+		String month = getPara("month");
+		if(StrKit.isBlank(year)) {
+			renderJson("");
+		} else {
+			renderJson(service.getPriceList(year, month));
+		}
+	}
 
 }
