@@ -55,7 +55,7 @@ caption{
 					</select>
 				</div>
 				<div class="form-group">
-					<label>时间：</label>
+					<label>月份：</label>
 					<select class="form-control" id="monthSel">
 						<option value="0">请选择月份</option>
 					</select>
