@@ -1,5 +1,8 @@
 package com.wuzhou.controller;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 import org.apache.log4j.Logger;
 
 import com.jfinal.core.Controller;
@@ -112,27 +115,65 @@ public class BookIncomingController extends Controller {
 	}
 	
 	/**
-	 * 排行榜
+	 * 排行榜页面
 	 */
 	public void priceList() {
 		try{
-			setAttr("years", service.getDistinctYear());
+			Set<String> set = new LinkedHashSet<String>();
+			String saleTime = service.getDistinctSaleTime(set);
+			setAttr("saleTime", saleTime);
+			setAttr("years", set.toString().replaceAll("[\\[\\]\\s]", ""));
+		}catch(Exception ex) {
+			ex.printStackTrace();
+			log.error(ex);
+			setAttr("years", "");
+			setAttr("saleTime", "");
+		}
+		render("/cw/PriceList.jsp"); 
+	}
+	
+	/**
+	 * top 10 排序
+	 */
+	public void getPriceList() {
+		String year = getPara("year");
+		String month = getPara("month");
+		String type = getPara("type", "销量");
+		if(StrKit.isBlank(year)) {
+			renderJson("");
+		} else {
+			renderJson(service.getPriceList(year, month, type));
+		}
+	}
+
+	/**
+	 * 图标分析
+	 */
+	public void incomingPic() {
+		try{
+			Set<String> set = new LinkedHashSet<String>();
+			service.getDistinctSaleTime(set);
+			setAttr("years", set.toString().replaceAll("[\\[\\]\\s]", ""));
 		}catch(Exception ex) {
 			ex.printStackTrace();
 			log.error(ex);
 			setAttr("years", "");
 		}
-		render("/cw/PriceList.jsp"); 
+		render("/cw/IncomingPic.jsp");
 	}
 	
-	public void getPriceList() {
+	
+	public void getIncomingPicByYear() {
 		String year = getPara("year");
-		String month = getPara("month");
-		if(StrKit.isBlank(year)) {
-			renderJson("");
-		} else {
-			renderJson(service.getPriceList(year, month));
+		String bookNum = getPara("bookNum");
+		String out = "";
+		try {
+			out = service.incomingPic(year, bookNum);
+		} catch(Exception ex) {
+			ex.printStackTrace();
+			log.error(ex);
 		}
+		renderText(out);
 	}
-
+	
 }

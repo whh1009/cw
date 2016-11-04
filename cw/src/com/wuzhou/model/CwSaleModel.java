@@ -60,12 +60,34 @@ public class CwSaleModel extends Model<CwSaleModel> {
 		return find("SELECT * FROM cw_sale WHERE 1 = 1 " + mySearchSql + " ORDER BY id DESC");
 	}
 	
-	public List<Record> getPriceList(String year, String month) {
-		if(StrKit.isBlank(month)) {
-			return Db.find("SELECT book_num AS bookNum, book_name AS bookName, TRUNCATE(SUM(sale_count),2) AS totalCount, TRUNCATE(SUM(sale_rmb),2) AS totalRmb, TRUNCATE(SUM(sale_dollar),2) AS totalDollar FROM cw_sale WHERE sale_time LIKE '"+year+"' GROUP BY book_num ORDER BY totalCount DESC LIMIT 10");
+	public List<Record> getPriceList(String year, String month, String type) {
+		String orderby = "";
+		if("美元".equals(type)) {
+			orderby = "totalDollar";
+		} else if("人民币".equals(type)) {
+			orderby = "totalRmb";
 		} else {
-			return Db.find("SELECT book_num AS bookNum, book_name AS bookName, TRUNCATE(SUM(sale_count),2) AS totalCount, TRUNCATE(SUM(sale_rmb),2) AS totalRmb, TRUNCATE(SUM(sale_dollar),2) AS totalDollar FROM cw_sale WHERE sale_time = '"+year+month+"' GROUP BY book_num ORDER BY totalCount DESC LIMIT 10");
+			orderby = "totalCount";
 		}
-		
+		if(StrKit.isBlank(month)) {
+			return Db.find("SELECT book_num AS bookNum, book_name AS bookName, SUM(sale_count) AS totalCount, TRUNCATE(SUM(sale_rmb),2) AS totalRmb, TRUNCATE(SUM(sale_dollar),2) AS totalDollar FROM cw_sale WHERE sale_time LIKE '"+year+"%' GROUP BY book_num ORDER BY "+orderby+" DESC LIMIT 15");
+		} else {
+			return Db.find("SELECT book_num AS bookNum, book_name AS bookName, SUM(sale_count) AS totalCount, TRUNCATE(SUM(sale_rmb),2) AS totalRmb, TRUNCATE(SUM(sale_dollar),2) AS totalDollar FROM cw_sale WHERE sale_time = '"+year+month+"' GROUP BY book_num ORDER BY "+orderby+" DESC LIMIT 15");
+		}
+	}
+	
+	/**
+	 * 按年统计书的总价格，总销量
+	 * 也可以按照统计某一本书某年的总价格，总销量
+	 * @param year
+	 * @param bookNum
+	 * @return
+	 */
+	public List<Record> incomingPic(String year, String bookNum) {
+		if(StrKit.isBlank(bookNum)) {
+			return Db.find("SELECT sale_time as saleTime, SUM(sale_count) AS totalCount, TRUNCATE(SUM(sale_rmb),2) AS totalRmb, TRUNCATE(SUM(sale_dollar),2) AS totalDollar FROM cw_sale WHERE sale_time LIKE '"+year+"%' GROUP BY sale_time ORDER BY saleTime");
+		} else {
+			return Db.find("SELECT sale_time as saleTime, SUM(sale_count) AS totalCount, TRUNCATE(SUM(sale_rmb),2) AS totalRmb, TRUNCATE(SUM(sale_dollar),2) AS totalDollar FROM cw_sale WHERE sale_time LIKE '"+year+"%' and book_num = '"+bookNum+"' GROUP BY sale_time ORDER BY saleTime");
+		}
 	}
 }

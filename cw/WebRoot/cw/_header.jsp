@@ -49,6 +49,7 @@
 						<ul class="dropdown-menu">
 							<li><a href="${ctx }/incoming"><i class='glyphicon glyphicon-signal'></i>&nbsp;电子书销售列表</a></li>
 							<li><a href="${ctx }/incoming/priceList"><i class='glyphicon glyphicon-import'></i>&nbsp;销售排行榜</a></li>
+							<li><a href="${ctx }/incoming/incomingPic"><i class='glyphicon glyphicon-import'></i>&nbsp;销售分析</a></li>
 						</ul>
 					</li>
 					<li><a href="${ctx }/book/bookPriceSummary"><i class='glyphicon glyphicon-signal'></i>&nbsp;电子书收支汇总</a></li>

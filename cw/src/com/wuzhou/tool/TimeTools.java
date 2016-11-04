@@ -6,6 +6,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import com.jfinal.kit.StrKit;
+
 /**
  * 日期工具类
  * 
@@ -206,8 +208,9 @@ public class TimeTools {
 	 * @param date
 	 * @return
 	 */
-	public static long getTimestamp(String date){
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+	public static long getTimestamp(String date, String strFormat){
+		if(StrKit.isBlank(strFormat)) strFormat = "yyyy-MM-dd HH:mm";
+		SimpleDateFormat dateFormat = new SimpleDateFormat(strFormat);
 		try {
 			Date parse = dateFormat.parse(date);
 			long time = parse.getTime();

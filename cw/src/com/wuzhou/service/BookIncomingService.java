@@ -2,9 +2,13 @@ package com.wuzhou.service;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.EncryptedDocumentException;
@@ -136,21 +140,77 @@ public class BookIncomingService {
 		return "";
 	}
 	
-	public String getDistinctYear() throws Exception{
+	public String getDistinctSaleTime(Set<String> set) throws Exception{
 		List<CwSaleModel> list = getDistinctSaleTime();
 		if(list==null||list.isEmpty()) {
 			return "";
 		} else {
-			String out = "";
+			List<String> ll = new ArrayList<String>();
 			for(CwSaleModel model : list) {
-				out+=model.getStr("sale_time")+",";
+				ll.add(model.getStr("sale_time"));
+			}
+			Collections.sort(ll);
+			String out = "";
+			for(String str : ll) {
+				set.add(str.substring(0, 4));
+				out+=str+",";
 			}
 			out = StringUtil.ignoreComma(out);
 			return out;
 		}
 	}
 	
-	public List<Record> getPriceList(String year, String month) {
-		return CwSaleModel.dao.getPriceList(year, month);
+	public List<Record> getPriceList(String year, String month, String type) {
+		return CwSaleModel.dao.getPriceList(year, month, type);
+	}
+	
+	public String incomingPic(String year, String bookNum){
+		String out = "";
+		List<Record> list = CwSaleModel.dao.incomingPic(year, bookNum);
+		if(list==null||list.isEmpty()) {
+			return "";
+		} else {
+			String [] months = {"01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"};
+			String line1="";
+			String line2="";
+			String line3="";
+			String saleTime = "";
+			BigDecimal totalCount = new BigDecimal(0);
+			BigDecimal totalRmb = new BigDecimal(0.00);
+			BigDecimal totalDollar = new BigDecimal(0.00);
+			String myYear = "";
+			for(int i = 0; i < months.length; i++) {
+				myYear = year+months[i];
+				boolean flag = false;
+				for(Record r : list) {
+					saleTime = r.getStr("saleTime");
+					totalCount = r.getBigDecimal("totalCount");
+					totalRmb = r.getBigDecimal("totalRmb");
+					totalDollar = r.getBigDecimal("totalDollar");
+					if(myYear.equals(saleTime)) {
+						line1+=totalCount+",";
+						line2+=totalRmb+",";
+						line3+=totalDollar+",";
+						flag = true;
+						break;
+					} else {
+						flag = false;
+					}
+				}
+				if(!flag) {
+					line1+="0,";
+					line2+="0,";
+					line3+="0,";
+				}
+			}
+			line1=StringUtil.ignoreComma(line1);
+			line2=StringUtil.ignoreComma(line2);
+			line3=StringUtil.ignoreComma(line3);
+			out = line1+"@"+line2+"@"+line3;
+		}
+		System.out.println("========");
+		System.out.println(out);
+		System.out.println("========");
+		return out;
 	}
 }

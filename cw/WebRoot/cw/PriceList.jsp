@@ -21,6 +21,18 @@ table {
 .form-group {
 	margin-right: 3em;
 }
+
+.cho{
+	cursor:pointer;
+}
+caption{
+	margin-top: 15px;
+    margin-bottom: 10px;
+    font-size: 20px;
+}
+.sort{
+	color:red;
+}
 </style>
 
 <link href="${ctx }/css/showLoading.css" rel="stylesheet">
@@ -48,30 +60,77 @@ table {
 						<option value="0">请选择月份</option>
 					</select>
 				</div>
-				<button class="btn btn-info">查询</button>
+				<button class="btn btn-info" onclick="initSearch('销量')">查询</button>
 			</div>
 		</div>
 		<div class="row">
+			<!-- <div class="col-sm-6"> -->
 			<table class="table table-hover" id="tableContent">
-				<thead><th>书号</th><th>书名</th><th>销量</th><th>人民币</th><th>美元</th></thead>
+				<caption>TOP 15</caption>
+				<thead>
+					<tr>
+						<th>书号</th>
+						<th>书名</th>
+						<th class="cho"><span data-toggle="tooltip" data-placement="top" title="点我排序">销量</span></th>
+						<th class="cho"><span data-toggle="tooltip" data-placement="top" title="点我排序">人民币</span></th>
+						<th class="cho"><span data-toggle="tooltip" data-placement="top" title="点我排序">美元</span></th>
+					</tr>
+				</thead>
 				<tbody></tbody>
 			</table>
+			<!-- </div> -->
 		</div>
 	</div>
 	<script>
-	var year = "2016";
-	var month = "04";
+	var year = "";
+	var month = "";
 	$(function() {
-		initSearch();
-		var years = "${years}";
+		$("[data-toggle='tooltip']").tooltip()
+		initYear();
 		
+		var saleTime = "${saleTime}";
+		$("#yearSel").change(function() {
+			year = $(this).val();
+			var monthSelHtml="<option value=\"0\">请选择月份</option>";
+			for(var i=0; i<saleTime.split(",").length;i++) {
+				if(saleTime.split(",")[i].startWith(year)) {
+					monthSelHtml+="<option value=\""+saleTime.split(",")[i].substr(4)+"\">"+saleTime.split(",")[i].substr(4)+"</option>";
+				}
+			}
+			$("#monthSel").html(monthSelHtml);
+		});
+		$("#monthSel").change(function() {
+			month = $(this).val();
+		});
+		
+		$(".cho").click(function() {
+			$(".cho").removeClass("sort");
+			$(this).addClass("sort");
+			initSearch($(this).find("span").html());
+		});
 	});
 	
-	function initSearch() {
+	function initYear() {
+		var years = "${years}";
+		var yearSelHtml = "<option value=\"\">请选年份</option>";
+		for(var i=0; i<years.split(",").length; i++) {
+			yearSelHtml+="<option value=\""+years.split(",")[i]+"\">"+years.split(",")[i]+"</option>";
+		}
+		$("#yearSel").html(yearSelHtml);
+	}
+	
+	function initSearch(type) {
+		if(year==""||year=="0") {
+			alert("请至少选择一个年份");
+			return;
+		}
+		if(month=="0"){
+			month = "";
+		}
 		$.ajax({
 			url:"${ctx}/incoming/getPriceList",
 			method:"POST",
-			data:{year:year, month:month},
+			data:{year:year, month:month, type:type},
 			beforeSend:function() {
 				$("#tableContent").showLoading();
 			},
@@ -100,7 +159,15 @@ table {
 			}
 		});
 	}
-	
+	String.prototype.startWith=function(str){  
+        if(str==null||str==""||this.length==0||str.length>this.length)  
+          return false;  
+        if(this.substr(0,str.length)==str)  
+          return true;  
+        else  
+          return false;  
+        return true;  
+    }  
 			
 	</script>
 </body>
