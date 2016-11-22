@@ -307,12 +307,12 @@ table {
     	if(timeSel=="0") {
     		var singleTime = $("#singletime").val();
     		if(singleTime!="") {
-    			_mySearchSql+=" and b.saleTime = '"+singleTime+"'";
+    			_mySearchSql+=" and s.sale_time = '"+singleTime+"'";
     		}
     	} else {
     		var reservationTime = $("#reservationtime").val();
     		if(reservationTime!="") {
-    			_mySearchSql+=" and b.saleTime bewteen '"+reservationTime.split(" \- ")[0]+"' and '"+reservationTime.split(" \- ")[1]+"''";
+    			_mySearchSql+=" and s.sale_time between '"+reservationTime.split(" \- ")[0]+"' and '"+reservationTime.split(" \- ")[1]+"'";
     		}
     	}
     	$("select[class^=sType]").each(function() {
