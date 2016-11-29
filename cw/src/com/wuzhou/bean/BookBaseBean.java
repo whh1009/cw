@@ -40,7 +40,7 @@ public class BookBaseBean {
 		bookPriceSummaryConditionMap = new HashMap<String, String>();
 		bookPriceSummaryConditionMap.put("book_name", "书名");
 		bookPriceSummaryConditionMap.put("book_isbn", "ISBN");
-		bookPriceSummaryConditionMap.put("book_isbn", "销售月份"); //时间段
+		//bookPriceSummaryConditionMap.put("book_isbn", "销售月份"); //时间段
 		bookPriceSummaryConditionMap.put("platform", "平台");
 	}
 	
