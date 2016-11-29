@@ -191,14 +191,17 @@ table {
 					if(data) {
 						if(data.totalRow>0) {
 							var content= "";
+							console.log(data);
+							var basePrice = 0; //成本
 							for(var i = 0; i<data.list.length; i++) {
+								basePrice = data.list[i].pdfPrice+data.list[i].epubPrice+data.list[i].adPrice+data.list[i].yzPrice+data.list[i].ext1Price+data.list[i].ext2Price+data.list[i].ext3Price+data.list[i].ext4Price+data.list[i].ext5Price;
 								content+="<tr><td style='vertical-align: middle;'>"+data.list[i].book_isbn+"</td>";
 								content+=    "<td style='vertical-align: middle;'>"+data.list[i].book_name+"</td>";
 								content+=    "<td style='vertical-align: middle;'>作者："+data.list[i].book_author+"<br />文种："+data.list[i].book_lang+"<br />转码公司："+data.list[i].trans_company+"<br />转码时间："+data.list[i].trans_time+"<br />出版社："+data.list[i].is_self+"</td>";
-								content+=    "<td style='vertical-align: middle;'>"+data.list[i].sale_time+"</td>";
-								content+=    "<td style='vertical-align: middle;'>PDF价格："+data.list[i].pdf_price+"<br />EPUB价格："+data.list[i].epub_price+"<br />广告费："+data.list[i].ad_price+"<br />样章："+data.list[i].yz_price+"<br />其他费用1："+data.list[i].ext_price1+"<br />其他费用2："+data.list[i].ext_price2+"<br />其他费用3："+data.list[i].ext_price3+"<br />其他费用4："+data.list[i].ext_price4+"<br />其他费用5："+data.list[i].ext_price5+"<br /></td>";
-								content+=    "<td style='vertical-align: middle;'>"+data.list[i].count+"</td>";
-								content+=    "<td style='vertical-align: middle;'>"+data.list[i].price+"</td>";
+								content+=    "<td style='vertical-align: middle;'>"+data.list[i].stime+"</td>";
+								content+=    "<td style='vertical-align: middle;'>PDF价格："+data.list[i].pdf_price+"<br />EPUB价格："+data.list[i].epub_price+"<br />广告费："+data.list[i].ad_price+"<br />样章："+data.list[i].yz_price+"<br />其他费用1："+data.list[i].ext_price1+"<br />其他费用2："+data.list[i].ext_price2+"<br />其他费用3："+data.list[i].ext_price3+"<br />其他费用4："+data.list[i].ext_price4+"<br />其他费用5："+data.list[i].ext_price5+"<br /><b>总成本："+basePrice+"</b></td>";
+								content+=    "<td style='vertical-align: middle;'>"+data.list[i].scount+"</td>";
+								content+=    "<td style='vertical-align: middle;'>人民币："+data.list[i].srmb+"<br />美　元："+data.list[i].sdollar+"</td>";
 								if(data.list[i].platform==2) {
 									content+="<td style='vertical-align: middle;'>亚马逊美国</td>";
 								} else if(data.list[i].platform==3) {
@@ -212,6 +215,7 @@ table {
 							}
 							$("#tableContent tbody").html(content);
 							initPage(data.pageNumber, data.totalPage, data.totalRow);
+							
 							//initPriceCount();
 						} else {
 							$("#tableContent tbody").html("<tr><td><font color='red'>暂无数据</font></td></tr>");
