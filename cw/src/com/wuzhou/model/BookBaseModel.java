@@ -77,8 +77,8 @@ public class BookBaseModel extends Model<BookBaseModel> {
 	public Page<Record> getBookSaleByPlatform(int pageNumber, String condition) {
 		String sql = " ";
 		sql+= " FROM book_base b, cw_sale s WHERE b.book_isbn = s.book_num AND b.book_isbn IS NOT NULL AND b.book_isbn != '' AND s.book_num IS NOT NULL AND b.book_status = 1 ";
-		sql+=" "+condition.replace("[\\s\\-]", "")+" ";
+		sql+=" "+condition.replaceAll("[\\-]", "")+" ";
 		sql+= " GROUP BY b.book_isbn, s.book_num";
-		return Db.paginate(pageNumber, 15, "SELECT s.platform, b.*, SUM(b.author_royalty) royalty,SUM(b.ad_price) adPrice,SUM(b.epub_price) epubPrice,SUM(b.pdf_price) pdfPrice,SUM(b.yz_price) yzPrice,SUM(b.ext_price1) ext1Price,SUM(b.ext_price2) ext2Price,SUM(b.ext_price3) ext3Price,SUM(b.ext_price4) ext4Price,SUM(b.ext_price5) ext5Price,s.zkl,SUM(s.sale_count) scount,SUM(s.discount) sdis,SUM(s.sale_rmb) srmb, SUM(s.sale_dollar) sdollar,s.sale_time stime ", sql);
+		return Db.paginate(pageNumber, 15, "SELECT b.*, s.zkl,SUM(s.sale_count) scount,SUM(s.discount) sdis,SUM(s.sale_rmb) srmb, SUM(s.sale_dollar) sdollar,s.sale_time stime ", sql);
 	}
 }

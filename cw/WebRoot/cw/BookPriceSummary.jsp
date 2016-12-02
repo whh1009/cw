@@ -90,6 +90,10 @@ table {
     		<div class="col-sm-4">
     			<br />
     			<small style="cursor:pointer" data-toggle="tooltip" data-placement="right" title="添加检索条件" onclick="addSearchConditionBtn()"><i class="glyphicon glyphicon-plus"></i></small>
+    			<span id="span1">&nbsp;&nbsp;&nbsp;&nbsp;数量：0.0</span>&nbsp;
+    			<span id="span2">&nbsp;&nbsp;&nbsp;金额：0.0</span><br />
+    			<span id="span3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;版税：0.0</span>&nbsp;
+    			<span id="span4">&nbsp;&nbsp;&nbsp;利润：0.0</span>
     		</div>
     	</div>
     	
@@ -153,22 +157,18 @@ table {
 		}
 		
 		function initPriceCount() {
-			var saleTime = $("#saleTimeSel").val();
-			var platform = $("#platformSel").val();
-			if(saleTime!="0"&&saleTime!="") {
-				_mySearchSql += " and sale_time = "+saleTime;
-			}
-			if(platform!="0"&&platform!="") {
-				_mySearchSql += " and platform = " + platform;
-			}
 			$.post("${ctx}/book/getBookPriceCount", {mySearchSql:_mySearchSql}, function(data){
-				$("#priceCountDiv").html("<div class='alert alert-info' role='alert'><strong>汇总</strong>&nbsp;&nbsp;&nbsp;&nbsp;总数："+data.count+"&nbsp;&nbsp;&nbsp;&nbsp;总价："+data.price+"</div>");
+				console.log(data);
+				$("#span1").html("&nbsp;&nbsp;&nbsp;&nbsp;数量："+data.scount);
+				$("#span2").html("&nbsp;&nbsp;&nbsp;金额："+data.srmb);
+				$("#span3").html("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;版税："+data.royalty);
+				$("#span4").html("&nbsp;&nbsp;&nbsp;利润："+(data.srmb-data.royalty-data.cb).toFixed(2));
 			});
 		}
 		
 		//初始化表格标题
 		function initTableHeader() {
-			var header = "<tr><th>ISBN</th><th>书名</th><th>基本信息</th><th>销售时间</th><th>成本</th><th>销售总量</th><th>销售金额</th><th>平台</th></tr>";
+			var header = "<tr><th>ISBN</th><th>书名</th><th>基本信息</th><th>销售时间</th><th>成本</th><th>销售金额</th><th>销售总量</th><th>利润</th></tr>";
 			$("#tableContent thead").html(header);
 		}
 		
@@ -192,16 +192,26 @@ table {
 						if(data.totalRow>0) {
 							var content= "";
 							console.log(data);
-							var basePrice = 0; //成本
+							var basePrice = 0.0; //转码成本
+							var lirun = 0.0; //利润
+							var banshui = 0.0 //版税成本
 							for(var i = 0; i<data.list.length; i++) {
-								basePrice = data.list[i].pdfPrice+data.list[i].epubPrice+data.list[i].adPrice+data.list[i].yzPrice+data.list[i].ext1Price+data.list[i].ext2Price+data.list[i].ext3Price+data.list[i].ext4Price+data.list[i].ext5Price;
+								basePrice = (data.list[i].pdf_price+data.list[i].epub_price+data.list[i].ad_price+data.list[i].yz_price+data.list[i].ext_price1+data.list[i].ext_price2+data.list[i].ext_price3+data.list[i].ext_price4+data.list[i].ext_price5).toFixed(2);
+								banshui = ((data.list[i].author_royalty/100.00)*data.list[i].srmb).toFixed(2);
+								lirun = (data.list[i].srmb-basePrice-banshui).toFixed(2);
 								content+="<tr><td style='vertical-align: middle;'>"+data.list[i].book_isbn+"</td>";
 								content+=    "<td style='vertical-align: middle;'>"+data.list[i].book_name+"</td>";
-								content+=    "<td style='vertical-align: middle;'>作者："+data.list[i].book_author+"<br />文种："+data.list[i].book_lang+"<br />转码公司："+data.list[i].trans_company+"<br />转码时间："+data.list[i].trans_time+"<br />出版社："+data.list[i].is_self+"</td>";
-								content+=    "<td style='vertical-align: middle;'>"+data.list[i].stime+"</td>";
-								content+=    "<td style='vertical-align: middle;'>PDF价格："+data.list[i].pdf_price+"<br />EPUB价格："+data.list[i].epub_price+"<br />广告费："+data.list[i].ad_price+"<br />样章："+data.list[i].yz_price+"<br />其他费用1："+data.list[i].ext_price1+"<br />其他费用2："+data.list[i].ext_price2+"<br />其他费用3："+data.list[i].ext_price3+"<br />其他费用4："+data.list[i].ext_price4+"<br />其他费用5："+data.list[i].ext_price5+"<br /><b>总成本："+basePrice+"</b></td>";
-								content+=    "<td style='vertical-align: middle;'>"+data.list[i].scount+"</td>";
+								content+=    "<td style='vertical-align: middle;'>作者："+data.list[i].book_author+"<br />文种："+data.list[i].book_lang+"<br />转码公司："+data.list[i].trans_company+"<br />出版社："+data.list[i].is_self+"</td>";
+								content+=    "<td style='vertical-align: middle;'>"+data.list[i].stime+"</td>";								
+								content+=    "<td style='vertical-align: middle;'>版税："+banshui+"<br />转码："+basePrice+"</td>";
 								content+=    "<td style='vertical-align: middle;'>人民币："+data.list[i].srmb+"<br />美　元："+data.list[i].sdollar+"</td>";
+								content+=    "<td style='vertical-align: middle;'><b>"+data.list[i].scount+"</b></td>";
+								if(lirun>0) {
+									content+=    "<td style='vertical-align: middle;'><b>"+lirun+"</b></td>";
+								} else{
+									content+=    "<td style='vertical-align: middle;'><b><font color='red'>"+lirun+"</font></b></td>";
+								}
+								/*
 								if(data.list[i].platform==2) {
 									content+="<td style='vertical-align: middle;'>亚马逊美国</td>";
 								} else if(data.list[i].platform==3) {
@@ -211,12 +221,12 @@ table {
 								} else if(data.list[i].platform=5) {
 									content+="<td style='vertical-align: middle;'>Over Drive</td>";
 								}
+								*/
 								content+="</tr>";
 							}
 							$("#tableContent tbody").html(content);
 							initPage(data.pageNumber, data.totalPage, data.totalRow);
-							
-							//initPriceCount();
+							initPriceCount();
 						} else {
 							$("#tableContent tbody").html("<tr><td><font color='red'>暂无数据</font></td></tr>");
 							$("#page").html("");
@@ -305,7 +315,7 @@ table {
     	$(arg).parent().parent().remove();
     }
 		
-  //检索
+  	//检索
     function getSearchCondition(){
     	var timeSel = $("input[name='timeRadio']:checked").val();
     	if(timeSel=="0") {
