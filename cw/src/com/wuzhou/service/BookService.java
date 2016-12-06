@@ -65,6 +65,7 @@ public class BookService {
 	}
 	
 	public Record getBookPriceCount(String mySearchSql) {
+		mySearchSql = mySearchSql.replace("-", "");
 		return BookSaleModel.dao.getBookPriceCount(mySearchSql);
 	}
 	
