@@ -160,13 +160,13 @@ public class BookIncomingService {
 		}
 	}
 	
-	public List<Record> getPriceList(String year, String month, String type) {
-		return CwSaleModel.dao.getPriceList(year, month, type);
+	public List<Record> getPriceList(String year, String month, String type, String platform) {
+		return CwSaleModel.dao.getPriceList(year, month, type, platform);
 	}
 	
-	public String incomingPic(String year, String bookNum){
+	public String incomingPic(String year, String bookNum, String platform){
 		String out = "";
-		List<Record> list = CwSaleModel.dao.incomingPic(year, bookNum);
+		List<Record> list = CwSaleModel.dao.incomingPic(year, bookNum, platform);
 		if(list==null||list.isEmpty()) {
 			return "";
 		} else {

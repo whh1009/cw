@@ -60,6 +60,12 @@ caption{
 						<option value="0">请选择月份</option>
 					</select>
 				</div>
+				<div class="form-group">
+					<label>平台：</label>
+					<select class="form-control" id="platformSel">
+						<option value="0">请选择平台</option>
+					</select>
+				</div>
 				<button class="btn btn-info" onclick="initSearch('销量')">查询</button>
 			</div>
 		</div>
@@ -87,7 +93,7 @@ caption{
 	$(function() {
 		$("[data-toggle='tooltip']").tooltip()
 		initYear();
-		
+		initPlatform();
 		var saleTime = "${saleTime}";
 		$("#yearSel").change(function() {
 			year = $(this).val();
@@ -119,6 +125,17 @@ caption{
 		$("#yearSel").html(yearSelHtml);
 	}
 	
+	function initPlatform() {
+		var data = eval(${platform});	
+		if(data){
+			var html = "<option value='0'>请选择平台</option>";
+			for(var i = 0 ; i < data.length; i ++) {
+				html += "<option value='"+data[i].platform+"'>"+data[i].platform+"</option>";
+			}
+			$("#platformSel").html(html);
+		}
+	}
+	
 	function initSearch(type) {
 		if(year==""||year=="0") {
 			alert("请至少选择一个年份");
@@ -127,10 +144,14 @@ caption{
 		if(month=="0"){
 			month = "";
 		}
+		var platform = $("#platformSel").val();
+		if(platform=="0"){
+			platform = "";
+		}
 		$.ajax({
 			url:"${ctx}/incoming/getPriceList",
 			method:"POST",
-			data:{year:year, month:month, type:type},
+			data:{year:year, month:month, type:type, platform:platform},
 			beforeSend:function() {
 				$("#tableContent").showLoading();
 			},

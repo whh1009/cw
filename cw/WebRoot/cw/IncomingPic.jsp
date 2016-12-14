@@ -55,6 +55,12 @@ caption{
 					</select>
 				</div>
 				<div class="form-group">
+					<label>平台：</label>
+					<select class="form-control" id="platformSel">
+						<option value="0">请选平台</option>
+					</select>
+				</div>
+				<div class="form-group">
 					<label>书号：</label>
 					<input type="text" class="form-control" style="width:14em;" id="bookNum" placeholder="不输入则统计全部">
 				</div>
@@ -73,7 +79,7 @@ caption{
 	$(function() {
 		
 		initYear();
-		
+		initPlatform();
 		$("#yearSel").change(function() {
 			year = $(this).val();
 		});
@@ -95,13 +101,28 @@ caption{
 		$("#yearSel").html(yearSelHtml);
 	}
 	
+	function initPlatform() {
+		var data = eval(${platform});	
+		if(data){
+			var html = "<option value='0'>请选择平台</option>";
+			for(var i = 0 ; i < data.length; i ++) {
+				html += "<option value='"+data[i].platform+"'>"+data[i].platform+"</option>";
+			}
+			$("#platformSel").html(html);
+		}
+	}
+	
 	function initQuery() {
 		if(year==""||year=="0") {
 			alert("请至少选择一个年份");
 			return;
 		}
+		var platform = $("#platformSel").val();
+		if(platform=="0") {
+			platform="";
+		}
 		bookNum = $("#bookNum").val();
-		$.post("${ctx}/incoming/getIncomingPicByYear", {year:year, bookNum:bookNum}, function(data) {
+		$.post("${ctx}/incoming/getIncomingPicByYear", {year:year, bookNum:bookNum, platform:platform}, function(data) {
 			if(data) {
 				var totalCountArray = new Array();
 				var totalRmbArray = new Array();

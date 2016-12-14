@@ -6,6 +6,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 
 import com.jfinal.core.Controller;
+import com.jfinal.kit.JsonKit;
 import com.jfinal.kit.StrKit;
 import com.jfinal.plugin.activerecord.Page;
 import com.wuzhou.model.CwSaleModel;
@@ -123,11 +124,13 @@ public class BookIncomingController extends Controller {
 			String saleTime = service.getDistinctSaleTime(set);
 			setAttr("saleTime", saleTime);
 			setAttr("years", set.toString().replaceAll("[\\[\\]\\s]", ""));
+			setAttr("platform", JsonKit.toJson(service.getDistinctPlatform()));
 		}catch(Exception ex) {
 			ex.printStackTrace();
 			log.error(ex);
 			setAttr("years", "");
 			setAttr("saleTime", "");
+			setAttr("platform", "");
 		}
 		render("/cw/PriceList.jsp"); 
 	}
@@ -142,7 +145,8 @@ public class BookIncomingController extends Controller {
 		if(StrKit.isBlank(year)) {
 			renderJson("");
 		} else {
-			renderJson(service.getPriceList(year, month, type));
+			String platform = getPara("platform");
+			renderJson(service.getPriceList(year, month, type, platform));
 		}
 	}
 
@@ -154,10 +158,12 @@ public class BookIncomingController extends Controller {
 			Set<String> set = new LinkedHashSet<String>();
 			service.getDistinctSaleTime(set);
 			setAttr("years", set.toString().replaceAll("[\\[\\]\\s]", ""));
+			setAttr("platform", JsonKit.toJson(service.getDistinctPlatform()));
 		}catch(Exception ex) {
 			ex.printStackTrace();
 			log.error(ex);
 			setAttr("years", "");
+			setAttr("platform", "");
 		}
 		render("/cw/IncomingPic.jsp");
 	}
@@ -166,9 +172,10 @@ public class BookIncomingController extends Controller {
 	public void getIncomingPicByYear() {
 		String year = getPara("year");
 		String bookNum = getPara("bookNum");
+		String platform = getPara("platform");
 		String out = "";
 		try {
-			out = service.incomingPic(year, bookNum);
+			out = service.incomingPic(year, bookNum, platform);
 		} catch(Exception ex) {
 			ex.printStackTrace();
 			log.error(ex);

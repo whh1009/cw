@@ -60,7 +60,7 @@ public class CwSaleModel extends Model<CwSaleModel> {
 		return find("SELECT * FROM cw_sale WHERE 1 = 1 " + mySearchSql + " ORDER BY id DESC");
 	}
 	
-	public List<Record> getPriceList(String year, String month, String type) {
+	public List<Record> getPriceList(String year, String month, String type, String platform) {
 		String orderby = "";
 		if("美元".equals(type)) {
 			orderby = "totalDollar";
@@ -69,10 +69,14 @@ public class CwSaleModel extends Model<CwSaleModel> {
 		} else {
 			orderby = "totalCount";
 		}
+		String con = "";
+		if(StrKit.notBlank(platform)) {
+			con = " AND platform = '"+platform+"' ";
+		}
 		if(StrKit.isBlank(month)) {
-			return Db.find("SELECT book_num AS bookNum, book_name AS bookName, SUM(sale_count) AS totalCount, TRUNCATE(SUM(sale_rmb),2) AS totalRmb, TRUNCATE(SUM(sale_dollar),2) AS totalDollar FROM cw_sale WHERE sale_time LIKE '"+year+"%' GROUP BY book_num ORDER BY "+orderby+" DESC LIMIT 15");
+			return Db.find("SELECT book_num AS bookNum, book_name AS bookName, SUM(sale_count) AS totalCount, TRUNCATE(SUM(sale_rmb),2) AS totalRmb, TRUNCATE(SUM(sale_dollar),2) AS totalDollar FROM cw_sale WHERE sale_time LIKE '"+year+"%' "+con+" GROUP BY book_num ORDER BY "+orderby+" DESC LIMIT 15");
 		} else {
-			return Db.find("SELECT book_num AS bookNum, book_name AS bookName, SUM(sale_count) AS totalCount, TRUNCATE(SUM(sale_rmb),2) AS totalRmb, TRUNCATE(SUM(sale_dollar),2) AS totalDollar FROM cw_sale WHERE sale_time = '"+year+month+"' GROUP BY book_num ORDER BY "+orderby+" DESC LIMIT 15");
+			return Db.find("SELECT book_num AS bookNum, book_name AS bookName, SUM(sale_count) AS totalCount, TRUNCATE(SUM(sale_rmb),2) AS totalRmb, TRUNCATE(SUM(sale_dollar),2) AS totalDollar FROM cw_sale WHERE sale_time = '"+year+month+"' "+con+" GROUP BY book_num ORDER BY "+orderby+" DESC LIMIT 15");
 		}
 	}
 	
@@ -83,11 +87,15 @@ public class CwSaleModel extends Model<CwSaleModel> {
 	 * @param bookNum
 	 * @return
 	 */
-	public List<Record> incomingPic(String year, String bookNum) {
+	public List<Record> incomingPic(String year, String bookNum, String platform) {
+		String con = "";
+		if(StrKit.notBlank(platform)) {
+			con = " AND platform = '"+platform+"' ";
+		}
 		if(StrKit.isBlank(bookNum)) {
-			return Db.find("SELECT sale_time as saleTime, SUM(sale_count) AS totalCount, TRUNCATE(SUM(sale_rmb),2) AS totalRmb, TRUNCATE(SUM(sale_dollar),2) AS totalDollar FROM cw_sale WHERE sale_time LIKE '"+year+"%' GROUP BY sale_time ORDER BY saleTime");
+			return Db.find("SELECT sale_time as saleTime, SUM(sale_count) AS totalCount, TRUNCATE(SUM(sale_rmb),2) AS totalRmb, TRUNCATE(SUM(sale_dollar),2) AS totalDollar FROM cw_sale WHERE sale_time LIKE '"+year+"%' "+con+" GROUP BY sale_time ORDER BY saleTime");
 		} else {
-			return Db.find("SELECT sale_time as saleTime, SUM(sale_count) AS totalCount, TRUNCATE(SUM(sale_rmb),2) AS totalRmb, TRUNCATE(SUM(sale_dollar),2) AS totalDollar FROM cw_sale WHERE sale_time LIKE '"+year+"%' and book_num = '"+bookNum+"' GROUP BY sale_time ORDER BY saleTime");
+			return Db.find("SELECT sale_time as saleTime, SUM(sale_count) AS totalCount, TRUNCATE(SUM(sale_rmb),2) AS totalRmb, TRUNCATE(SUM(sale_dollar),2) AS totalDollar FROM cw_sale WHERE sale_time LIKE '"+year+"%' and book_num = '"+bookNum+"' "+con+" GROUP BY sale_time ORDER BY saleTime");
 		}
 	}
 }
