@@ -57,7 +57,7 @@ public class WZConfig extends JFinalConfig {
 		
 		arp.addMapping("wz_user", UserModel.class);
 		arp.addMapping("book_base", BookBaseModel.class);
-		arp.addMapping("book_sale", BookSaleModel.class);
+//		arp.addMapping("book_sale", BookSaleModel.class);
 		arp.addMapping("excel_map", ExcelMapModel.class);
 		arp.addMapping("cw_sale", CwSaleModel.class);
 		arp.setShowSql(true);

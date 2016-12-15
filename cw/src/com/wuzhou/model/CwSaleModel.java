@@ -49,7 +49,7 @@ public class CwSaleModel extends Model<CwSaleModel> {
 	}
 	
 	public Record getBookPriceCount(String mySearchSql) {
-		return Db.findFirst("SELECT TRUNCATE(sum(sale_rmb), 2) AS rmb, TRUNCATE(SUM(sale_dollar), 2) AS dollar, SUM(sale_count) AS count, TRUNCATE(SUM(discount), 2) AS discount FROM cw_sale WHERE 1=1 ");
+		return Db.findFirst("SELECT TRUNCATE(sum(sale_rmb), 2) AS rmb, TRUNCATE(SUM(sale_dollar), 2) AS dollar, SUM(sale_count) AS count, TRUNCATE(SUM(discount), 2) AS discount FROM cw_sale WHERE 1=1 " + mySearchSql);
 	}
 	
 	public void deleteByServerName(String serverName) {
