@@ -43,8 +43,14 @@ table {
 					</select>
 				</div>
 				<div class="form-group">
-					<label>时间：</label>
-					<select class="form-control" id="saleTimeSel">
+					<label>年份：</label>
+					<select class="form-control" id="yearSel">
+						<option value="0">请选择年份</option>
+					</select>
+				</div>
+				<div class="form-group">
+					<label>月份：</label>
+					<select class="form-control" id="monthSel">
 						<option value="0">请选择月份</option>
 					</select>
 				</div>
@@ -92,22 +98,53 @@ table {
 		var _mySearchSql= "";
 		$(function() {
 			initPlatform();
-			initSaleTime();
+			initYear();
 			initBookLan();
 			initTableHeader();
 			initTableBody();
+			
+			var saleTime = "${saleTime}";
+			console.log(saleTime);
+			$("#yearSel").change(function() {
+				var year = $(this).val();
+				var monthSelHtml="<option value=\"0\">请选择月份</option>";
+				for(var i=0; i<saleTime.split(",").length;i++) {
+					if(saleTime.split(",")[i].toString().startWith(year)) {
+						monthSelHtml+="<option value=\""+saleTime.split(",")[i].substr(4)+"\">"+saleTime.split(",")[i].substr(4)+"</option>";
+					}
+				}
+				$("#monthSel").html(monthSelHtml);
+			});
+			$("#monthSel").change(function() {
+				var month = $(this).val();
+			});
 		});
+		
+		String.prototype.startWith=function(str){  
+            if(str==null||str==""||this.length==0||str.length>this.length)  
+              return false;  
+            if(this.substr(0,str.length)==str)  
+              return true;  
+            else  
+              return false;  
+            return true;  
+        }  
 		
 		function mySearchCon() {
 			_mySearchSql="";
-			var saleTime = $("#saleTimeSel").val();
+			var year = $("#yearSel").val();
+			var month = $("#monthSel").val();
 			var platform = $("#platformSel").val();
 			var bookNum = $("#bookNumTxt").val();
 			var bookName = $("#bookNameTxt").val();
 			var bookAuthor = $("#bookAuthorTxt").val();
 			var bookLan = $("#bookLanSel").val();
-			if(saleTime!="0"&&saleTime!="") {
-				_mySearchSql += " and sale_time = '"+saleTime+"'";
+			if(year!="0"&&year!="") {
+				if(month!="0"&&month!="") {
+					_mySearchSql += " and sale_time = '"+year+month+"'";
+				} else {
+					_mySearchSql += " and sale_time like '"+year+"%'";
+				}
 			}
 			if(platform!="0"&&platform!="") {
 				_mySearchSql += " and platform = '" + platform+"'";
@@ -142,6 +179,16 @@ table {
 		}
 		
 		//初始化时间
+		function initYear() {
+			var years = "${years}";
+			var yearSelHtml = "<option value=\"\">请选年份</option>";
+			for(var i=0; i<years.split(",").length; i++) {
+				yearSelHtml+="<option value=\""+years.split(",")[i]+"\">"+years.split(",")[i]+"</option>";
+			}
+			$("#yearSel").html(yearSelHtml);
+		}
+		
+		/*
 		function initSaleTime() {
 			$.post("${ctx}/incoming/getDistinctSaleTime", {}, function(data) {
 				var saleTimeSel = "<option value='0'>请选择月份</option>";
@@ -153,6 +200,7 @@ table {
 				$("#saleTimeSel").html(saleTimeSel);
 			});
 		}
+		*/
 		
 		function initBookLan() {
 			$.post("${ctx}/incoming/getDistinctBookLan", {}, function(data){

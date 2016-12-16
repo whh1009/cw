@@ -23,6 +23,15 @@ public class BookIncomingController extends Controller {
 	BookIncomingService service = new BookIncomingService();
 
 	public void index() {
+		try{
+			Set<String> set = new LinkedHashSet<String>();
+			String saleTime = service.getDistinctSaleTime(set);
+			setAttr("saleTime", saleTime);
+			setAttr("years", set.toString().replaceAll("[\\[\\]\\s]", ""));
+		} catch(Exception ex) {
+			setAttr("saleTime", "");
+			setAttr("years", "");
+		}
 		render("/cw/BookIncoming.jsp");
 	}
 
