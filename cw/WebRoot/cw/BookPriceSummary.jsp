@@ -254,7 +254,6 @@ table {
 				success:function(data) {
 					$("body").hideLoading();
 					if(data&&data.endsWith(".xlsx")) {
-						alert(222);
 						window.location.href = "${ctx}/book/downloadBookPriceSummary?n="+data;
 					} else {
 						alert("导出失败");
