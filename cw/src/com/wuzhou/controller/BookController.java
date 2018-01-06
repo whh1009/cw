@@ -89,6 +89,25 @@ public class BookController extends Controller {
 	}
 	
 	/**
+	 * 导出
+	 */
+	public void exportBookPriceSummary() {
+		String mySearchSql = getPara("mySearchSql", "");
+		try {
+			renderText(service.createBookPriceSummary(mySearchSql));
+		} catch(Exception ex) {
+			ex.printStackTrace();
+			log.error(ex);
+			renderText("");
+		}
+	}
+	
+	public void downloadBookPriceSummary() {
+		String excelName = getPara("n");
+		renderFile("/out/"+excelName);
+	}
+	
+	/**
 	 * 被“删除”的图书
 	 */
 	public void bookDelPage() {

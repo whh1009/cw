@@ -74,6 +74,7 @@ table {
 			</script>
 			<div class="col-sm-4">
     			<button type="button" class="btn btn-info" onclick="initSearch(1)"><i class='glyphicon glyphicon-search'></i> 查询</button>
+    			<button type="button" class="btn btn-warning" onclick="exportBookPriceSummary()"><i class='glyphicon glyphicon-import'></i> 导出</button>
     		</div>
 		</div>
 		
@@ -240,6 +241,32 @@ table {
 			});
 		}
 		
+		function exportBookPriceSummary() {
+			_mySearchSql = "";
+			getSearchCondition();
+			$.ajax({
+				url:"${ctx}/book/exportBookPriceSummary",
+				method:"POST",
+				data:{mySearchSql: _mySearchSql},
+				beforeSend:function() {
+					$("body").showLoading();
+				},
+				success:function(data) {
+					$("body").hideLoading();
+					if(data&&data.endsWith(".xlsx")) {
+						alert(222);
+						window.location.href = "${ctx}/book/downloadBookPriceSummary?n="+data;
+					} else {
+						alert("导出失败");
+					}
+				},
+				error:function() {
+					$("body").hideLoading();
+					console.log("---error---");
+				}
+			});
+		}
+		
 		//初始化分页
 	    function initPage(pageNumber, totalPage, totalRow) {
 			var page = "<nav><ul class='pagination'><li><span>共 "+totalRow+" 条，"+totalPage+" 页</span></li>";
@@ -333,13 +360,14 @@ table {
     		var s = $(this).val();
     		var temp = $(this).attr("class").replace(" form-control","").replace("sType", "");
     		var v = $(".sVal"+temp).val();
-    		if(s!="0") {
-    			if(s=="book_isbn"||s=="book_name") {
-    				_mySearchSql+=" and b."+s+" like '%"+v+"%'";
-    			} else {
-    				_mySearchSql+=" and s."+s+" like '%"+v+"%'";
-    			}
-    			
+    		if(v) {
+	    		if(s!="0") {
+	    			if(s=="book_isbn"||s=="book_name") {
+	    				_mySearchSql+=" and b."+s+" like '%"+v+"%'";
+	    			} else {
+	    				_mySearchSql+=" and s."+s+" like '%"+v+"%'";
+	    			}
+	    		}
     		}
     	});
     }

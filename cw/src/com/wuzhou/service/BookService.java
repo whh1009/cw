@@ -1,11 +1,23 @@
 package com.wuzhou.service;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
+import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import com.jfinal.kit.PathKit;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.wuzhou.model.BookBaseModel;
 import com.wuzhou.model.BookSaleModel;
+import com.wuzhou.tool.POITools;
 
 public class BookService {
 
@@ -72,5 +84,42 @@ public class BookService {
 	///////////////////////////////////////////////////////////////
 	public Page<Record> getBookSaleByPlatform(int pageNumber, String mySearchSql) {
 		return BookBaseModel.dao.getBookSaleByPlatform(pageNumber, mySearchSql);
+	}
+	
+	
+	public String createBookPriceSummary(String mySearchSql) throws Exception {
+		List<Record> list = BookBaseModel.dao.getBookSaleByPlatform(mySearchSql);
+		if(list==null||list.isEmpty()) {
+			return "";
+		} else {
+			String excelName = PathKit.getWebRootPath()+File.separator+"temp"+File.separator + "bookPriceSummaryTemp.xlsx";
+			Workbook wb = POITools.getWorkbook(excelName);
+			Sheet sheet= POITools.getSheet(0, wb);
+			short rowNumber = 2;
+			for(Record record : list) {
+				Row row = POITools.createRow(sheet, rowNumber);
+				POITools.setCellValue(row.createCell(0), record.getStr("book_isbn"), null);
+				POITools.setCellValue(row.createCell(1), record.getStr("book_name"), null);
+				POITools.setCellValue(row.createCell(2), record.getStr("book_author"), null);
+				POITools.setCellValue(row.createCell(3), record.getStr("book_lang"), null);
+				POITools.setCellValue(row.createCell(4), record.getStr("trans_company"), null);
+				POITools.setCellValue(row.createCell(5), record.getStr("is_self"), null);
+				POITools.setCellValue(row.createCell(6), record.getStr("stime"), null);
+				POITools.setCellValue(row.createCell(7), record.getFloat("author_royalty")/100.00 * record.getBigDecimal("srmb").doubleValue(), null);
+				POITools.setCellValue(row.createCell(8), record.getBigDecimal("pdf_price").add(record.getBigDecimal("epub_price")).add(record.getBigDecimal("ad_price")).add(record.getBigDecimal("yz_price").add(record.getBigDecimal("ext_price1")).add(record.getBigDecimal("ext_price2")).add(record.getBigDecimal("ext_price3")).add(record.getBigDecimal("ext_price4")).add(record.getBigDecimal("ext_price5"))), null);
+				POITools.setCellValue(row.createCell(9), record.getBigDecimal("srmb").doubleValue(), null);
+				POITools.setCellValue(row.createCell(10), record.getBigDecimal("sdollar").doubleValue(), null);
+				POITools.setCellValue(row.createCell(11), record.getBigDecimal("scount").doubleValue(), null);
+				POITools.setCellValue(row.createCell(12), 
+						record.getBigDecimal("srmb").doubleValue()-
+						record.getFloat("author_royalty")/100.00 * record.getBigDecimal("srmb").doubleValue() - 
+						record.getBigDecimal("pdf_price").add(record.getBigDecimal("epub_price")).add(record.getBigDecimal("ad_price")).add(record.getBigDecimal("yz_price").add(record.getBigDecimal("ext_price1")).add(record.getBigDecimal("ext_price2")).add(record.getBigDecimal("ext_price3")).add(record.getBigDecimal("ext_price4")).add(record.getBigDecimal("ext_price5"))).doubleValue(),  
+								null);
+				rowNumber++;
+			}
+			excelName =  UUID.randomUUID().toString().replace("-", "")+".xlsx";
+			POITools.saveAsWorkbook(wb, PathKit.getWebRootPath()+File.separator+"out"+File.separator + excelName);
+			return excelName;
+		}
 	}
 }

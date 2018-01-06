@@ -79,6 +79,16 @@ public class BookBaseModel extends Model<BookBaseModel> {
 		sql+= " FROM book_base b, cw_sale s WHERE b.book_isbn = s.book_num AND b.book_isbn IS NOT NULL AND b.book_isbn != '' AND s.book_num IS NOT NULL AND b.book_status = 1 ";
 		sql+=" "+condition.replaceAll("[\\-]", "")+" ";
 		sql+= " GROUP BY b.book_isbn, s.book_num";
+		System.out.println(sql);
 		return Db.paginate(pageNumber, 15, "SELECT b.*, s.zkl,SUM(s.sale_count) scount,SUM(s.discount) sdis,SUM(s.sale_rmb) srmb, SUM(s.sale_dollar) sdollar,s.sale_time stime ", sql);
+	}
+	
+	public List<Record> getBookSaleByPlatform(String condition) {
+		String sql = " ";
+		sql+= " FROM book_base b, cw_sale s WHERE b.book_isbn = s.book_num AND b.book_isbn IS NOT NULL AND b.book_isbn != '' AND s.book_num IS NOT NULL AND b.book_status = 1 ";
+		sql+=" "+condition.replaceAll("[\\-]", "")+" ";
+		sql+= " GROUP BY b.book_isbn, s.book_num";
+		System.out.println(sql);
+		return Db.find("SELECT b.*, s.zkl,SUM(s.sale_count) scount,SUM(s.discount) sdis,SUM(s.sale_rmb) srmb, SUM(s.sale_dollar) sdollar,s.sale_time stime " + sql);
 	}
 }
