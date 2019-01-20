@@ -1,5 +1,7 @@
 package com.wuzhou.controller;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -190,6 +192,38 @@ public class BookIncomingController extends Controller {
 			log.error(ex);
 		}
 		renderText(out);
+	}
+	
+	final static String [] month = {"01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"};
+	public void groupByBookNumPage() {
+		render("/cw/GroupByBookNum.jsp");
+	}
+	
+	
+	public void groupByBookNum() {
+		String startTime = getPara("startTime", "");
+		String endTime = getPara("endTime", "");
+		String platform = getPara("platform", "");
+		int page = getParaToInt("page", 1);
+		try {
+			renderJson(service.groupByBookNum(startTime, endTime, platform, page));
+		} catch(Exception ex) {
+			ex.printStackTrace();
+			renderJson("");
+		}
+	}
+	
+	public void exportGroupByBookNum() {
+		String startTime = getPara("startTime", "");
+		String endTime = getPara("endTime", "");
+		String platform = getPara("platform", "");
+		try {
+			String fileName = service.createXsltGroupByBookNum(startTime, endTime, platform);
+			renderText(fileName);
+		} catch(Exception ex) {
+			ex.printStackTrace();
+			renderText("");
+		}
 	}
 	
 }

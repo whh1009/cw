@@ -121,7 +121,7 @@ public class ExcelImportService {
 			bie.setBookName(POITools.getCellValue(row.getCell(3)));
 			bie.setBookAuthor(POITools.getCellValue(row.getCell(4)));
 			bie.setBookLan(POITools.getCellValue(row.getCell(5)));
-			bie.setSaleCount(Integer.parseInt(POITools.getCellValue(row.getCell(6))));
+			bie.setSaleCount(Integer.parseInt(POITools.getCellValue(row.getCell(6)).replace(".00", "")));
 			bie.setBookPrice(Float.parseFloat(POITools.getCellValue(row.getCell(7))));
 			bie.setZkl(Float.parseFloat(POITools.getCellValue(row.getCell(8))));
 			bie.setBookRmb(Float.parseFloat(POITools.getCellValue(row.getCell(9))));

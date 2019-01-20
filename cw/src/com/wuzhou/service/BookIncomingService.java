@@ -23,6 +23,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import com.jfinal.kit.PathKit;
+import com.jfinal.kit.StrKit;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.wuzhou.model.BookSaleModel;
@@ -212,5 +213,72 @@ public class BookIncomingService {
 		System.out.println(out);
 		System.out.println("========");
 		return out;
+	}
+	
+	
+	
+	
+	
+	public Page<CwSaleModel> groupByBookNum (String startTime, String endTime, String platform, int pageNumber) {
+		startTime = startTime.replace("-", "");
+		endTime = endTime.replace("-", "");
+		String select = "SELECT platform, book_num, book_name, book_author, book_lan, SUM(sale_count) AS sale, discount, SUM(sale_rmb) AS rmb, SUM(sale_dollar) AS dollar";
+		String sqlExceptSelect = " FROM cw_sale WHERE 1 = 1";
+		if(StrKit.notBlank(startTime, endTime)) {
+			sqlExceptSelect += " AND sale_time BETWEEN '" + startTime +"' AND '" + endTime + "' ";
+		}
+		if(StrKit.notBlank(platform) && !"0".equals(platform)) {
+			sqlExceptSelect += " AND platform = '"+platform+"'"; 
+		}
+		sqlExceptSelect += " GROUP BY book_num ORDER BY id DESC";
+		System.out.println(sqlExceptSelect);
+		return CwSaleModel.dao.paginate(pageNumber, 15, select, sqlExceptSelect);
+	}
+	
+	public String createXsltGroupByBookNum(String startTime, String endTime, String platform) {
+		String sql = "SELECT platform, book_num, book_name, book_author, book_lan, SUM(sale_count) AS sale, discount, SUM(sale_rmb) AS rmb, SUM(sale_dollar) AS dollar FROM cw_sale WHERE 1 = 1";
+		startTime = startTime.replace("-", "");
+		endTime = endTime.replace("-", "");
+		if(StrKit.notBlank(startTime, endTime)) {
+			sql += " AND sale_time BETWEEN '" + startTime +"' AND '" + endTime + "' ";
+		}
+		if(StrKit.notBlank(platform) && !"0".equals(platform)) {
+			sql += " AND platform = '"+platform+"'"; 
+		}
+		sql += " GROUP BY book_num ORDER BY id DESC";
+		List<CwSaleModel> list = CwSaleModel.dao.find(sql);
+		if(list==null||list.isEmpty()){
+			return "";
+		} else {
+			try {
+				Workbook wb = POITools.getWorkbook(PathKit.getWebRootPath()+File.separator+"temp"+File.separator+"groupByBookNumTemp.xlsx");
+				Sheet sheet = POITools.getSheet(0, wb);
+				for(int i = 0; i < list.size(); i++) {
+					CwSaleModel model = list.get(i);
+					Row row = POITools.createRow(sheet, (short)(i+1));
+					POITools.setCellValue(row.createCell(0), model.getStr("platform"), null);
+					POITools.setCellValue(row.createCell(1), model.getStr("book_num"), null);
+					POITools.setCellValue(row.createCell(2), model.getStr("book_name"), null);
+					POITools.setCellValue(row.createCell(3), model.getStr("book_author"), null);
+					POITools.setCellValue(row.createCell(4), model.getStr("book_lan"), null);
+					POITools.setCellValue(row.createCell(5), model.getBigDecimal("sale").toBigInteger(), null);
+					POITools.setCellValue(row.createCell(6), model.getBigDecimal("rmb"), null);
+					POITools.setCellValue(row.createCell(7), model.getBigDecimal("dollar"), null);
+				}
+				String fileName = new Date().getTime()+".xlsx";
+				POITools.saveAsWorkbook(wb, PathKit.getWebRootPath()+File.separator+"out"+File.separator+fileName);
+				return fileName;
+			} catch (EncryptedDocumentException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InvalidFormatException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return "";
 	}
 }
