@@ -48,7 +48,7 @@
 					<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="glyphicon glyphicon-th-list"></i> 电子书销售详情 <span class="caret"></span></a>
 						<ul class="dropdown-menu">
 							<li><a href="${ctx }/incoming"><i class='glyphicon glyphicon-signal'></i>&nbsp;电子书销售列表</a></li>
-							<li><a href="${ctx }/incoming/groupByBookNumPage"><i class='glyphicon glyphicon-signal'></i>&nbsp;书号分组统计</a></li>
+							<li><a href="${ctx }/incoming/groupByBookNumPage"><i class='glyphicon glyphicon-signal'></i>&nbsp;电子书书号分组统计</a></li>
 							<li><a href="${ctx }/incoming/priceList"><i class='glyphicon glyphicon-import'></i>&nbsp;销售排行榜</a></li>
 							<li><a href="${ctx }/incoming/incomingPic"><i class='glyphicon glyphicon-import'></i>&nbsp;销售分析</a></li>
 						</ul>
