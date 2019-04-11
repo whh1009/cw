@@ -230,7 +230,7 @@ public class BookIncomingService {
 		if(StrKit.notBlank(platform) && !"0".equals(platform)) {
 			sqlExceptSelect += " AND platform = '"+platform+"'"; 
 		}
-		sqlExceptSelect += " GROUP BY book_num ORDER BY id DESC";
+		sqlExceptSelect += " GROUP BY platform, book_num ORDER BY id DESC";
 		System.out.println(sqlExceptSelect);
 		return CwSaleModel.dao.paginate(pageNumber, 15, select, sqlExceptSelect);
 	}
@@ -245,7 +245,7 @@ public class BookIncomingService {
 		if(StrKit.notBlank(platform) && !"0".equals(platform)) {
 			sql += " AND platform = '"+platform+"'"; 
 		}
-		sql += " GROUP BY book_num ORDER BY id DESC";
+		sql += " GROUP BY platform, book_num ORDER BY id DESC";
 		List<CwSaleModel> list = CwSaleModel.dao.find(sql);
 		if(list==null||list.isEmpty()){
 			return "";

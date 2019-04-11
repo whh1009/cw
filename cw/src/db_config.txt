@@ -1,3 +1,3 @@
-jdbcUrl = jdbc:mysql://localhost:3306/wuzhou?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&autoReconnect=true
+jdbcUrl = jdbc:mysql://172.16.1.214:3606/wuzhou?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&autoReconnect=true
 user = root
-password = 123456
+password = cp_#1897&Whh
